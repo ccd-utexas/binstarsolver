@@ -51,7 +51,7 @@ setup(
     # Install using: $ pip install -e .[dev,test]
     extras_require = {
         'dev': ['check-manifest'],
-        'test': ['coverage'],
+        'test': ['coverage', 'pytest'],
     },
     # Data files included in installed packages.
     package_data={
