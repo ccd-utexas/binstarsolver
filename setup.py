@@ -55,10 +55,13 @@ setup(
     },
     # Data files included in installed packages.
     package_data={
-        # 'sample': ['package_data.dat'],
+        'binstarsolver': [
+            'test_yes_ltcurve_no_radvels.json',
+            'test_yes_ltcurve_yes_radvels.json',
+            'test_no_ltcurve_yes_radvels.json'
+            ],
     },
-    # Data files not included in installed packages.
-    # 'package_data' is preferred approach.
+    # Data files not included in installed packages. 'package_data' is preferred approach.
     # http://docs.python.org/3.4/distutils/setupscript.html#installing-additional-files
     # Example: 'data_file' will be installed into '<sys.prefix>/my_data'
     data_files=[
@@ -67,8 +70,8 @@ setup(
     # For executable scripts, use 'entry_points' rather than 'scripts'
     # for cross-platform portability.
     entry_points={
-        #'console_scripts': [
-        #    'sample=sample:main',
-        #],
+        'console_scripts': [
+            'binstarsolver=binstarsolver.main',
+        ],
     },
 )
