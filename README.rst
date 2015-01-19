@@ -11,7 +11,7 @@ See DESCRIPTION.rst.
 Examples
 --------
 
-* See repository `wiki <https://github.com/ccd-utexas/binstarsolver/wiki>`_.
+See repository `wiki <https://github.com/ccd-utexas/binstarsolver/wiki>`_.
 
 Installation
 ------------
