@@ -9,7 +9,7 @@ Description
 Overview
 ^^^^^^^^
 
-This model is a simple spherical detached binary star model with no orbital eccentricity, no limb darkening. The model is from chapter 7 of Budding (2007) and chapter 7 of Carroll and Ostlie (2007). The purpose of this package is to generate initial parameters as input to a more complete numerical model such as that of Wilson-Divinney, c.f. chapter 7 of Kallrath and Milone (2007).
+This model is a simple spherical detached binary star model with no orbital eccentricity, no limb darkening. The model is from chapter 7 of [1]_ and chapter 7 of [2]_. The purpose of this package is to generate initial parameters as input to a more complete numerical model such as that of Wilson-Divinney, c.f. chapter 7 of [3]_.
 
 Input observable quantities
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -38,16 +38,16 @@ Examples
 Installation
 ------------
 
-See :file:`INSTALL.md </INSTALL.md>`.
+See INSTALL.md.
 
 Contributing
 ------------
 
-See [CONTRIBUTING.md](CONTRIBUTING.md).
+See CONTRIBUTING.md.
 
 References
 ----------
 
-* [Budding, 2007, Introduction to Astronomical Photometry](https://books.google.com/books?id=g_K3-bQ8lTUC)
-* [Carroll and Ostlie, 2007, An Introduction to Modern Astrophysics](https://books.google.com/books?id=M8wPAQAAMAAJ)
-* [Kallrath and Milone, 2007, Eclipsing Binary Stars: Modeling and Analysis](https://books.google.com/books?id=CrXBnZFdjXgC)
+.. [1] `Budding, 2007, Introduction to Astronomical Photometry <https://books.google.com/books?id=g_K3-bQ8lTUC>`_
+.. [2] `Carroll and Ostlie, 2007, An Introduction to Modern Astrophysics <https://books.google.com/books?id=M8wPAQAAMAAJ>`_
+.. [3] `Kallrath and Milone, 2007, Eclipsing Binary Stars: Modeling and Analysis <https://books.google.com/books?id=CrXBnZFdjXgC>`_
