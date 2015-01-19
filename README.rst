@@ -38,12 +38,12 @@ Examples
 Installation
 ------------
 
-See INSTALL.md.
+See INSTALL.rst.
 
 Contributing
 ------------
 
-See CONTRIBUTING.md.
+See CONTRIBUTING.rst.
 
 References
 ----------
