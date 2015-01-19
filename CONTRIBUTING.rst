@@ -1,4 +1,5 @@
-# CONTRIBUTING
+CONTRIBUTING.rst
+================
 
 Thanks for your interest in contributing! Please use the following when contributing:
 
