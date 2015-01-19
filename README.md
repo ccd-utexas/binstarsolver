@@ -2,9 +2,11 @@
 
 Estimate physical quantities of an eclipsing, spectroscopic binary star system from observed lightcurves and radial velocities.
 
-This model is a simple spherical detached binary star model with no orbital eccentricity, no limb darkening. The model is from chapter 7 of Budding (2007) and chapter 7 of Carroll and Ostlie (2007). The purpose of this package is to generate initial parameters as input to a more complete numerical model such as that of Wilson-Divinney, c.f. chapter 7 of Kallrath and Milone (2007).
+## Description
 
-## Examples
+### Overview
+
+This model is a simple spherical detached binary star model with no orbital eccentricity, no limb darkening. The model is from chapter 7 of Budding (2007) and chapter 7 of Carroll and Ostlie (2007). The purpose of this package is to generate initial parameters as input to a more complete numerical model such as that of Wilson-Divinney, c.f. chapter 7 of Kallrath and Milone (2007).
 
 ### Input observable quantities
 
@@ -22,6 +24,10 @@ This model is a simple spherical detached binary star model with no orbital ecce
 * Ratio of stellar radiative fluxes.
 * Ratio of stellar effective temperatures.
 * Ratio of stellar luminosites.
+
+## Examples
+
+* See the wiki.
 
 ## References
 
