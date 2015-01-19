@@ -27,7 +27,7 @@ This model is a simple spherical detached binary star model with no orbital ecce
 
 ## Examples
 
-* See the wiki.
+* See the repository [wiki](https://github.com/ccd-utexas/binstarsolver/wiki).
 
 ## References
 
