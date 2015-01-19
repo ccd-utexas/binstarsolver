@@ -67,7 +67,7 @@ setup(
     # for cross-platform portability.
     entry_points={
         'console_scripts': [
-            'binstarsolver=binstarsolver.main',
+            'binstarsolver=binstarsolver.main:main',
         ],
     },
 )
