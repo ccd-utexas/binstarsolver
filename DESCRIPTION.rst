@@ -4,7 +4,10 @@ binstarsolver
 Overview
 ^^^^^^^^
 
-This model is a simple spherical detached binary star model with no orbital eccentricity, no limb darkening. The model is from chapter 7 of [1]_ and chapter 7 of [2]_. The purpose of this package is to generate initial parameters as input to a more complete numerical model such as that of Wilson-Divinney, c.f. chapter 7 of [3]_.
+The purpose of this project is to estimate physical quantities of an eclipsing, spectroscopic binary star using observed quantities.
+The estimated physical quantities serve as input to a more complete numerical model such as that of Wilson-Divinney, c.f. chapter 7 of [3]_.
+The model used in this project is a simple, spherical detached binary star model with no orbital eccentricity and no limb darkening.
+The model is from chapter 7 of [1]_ and chapter 7 of [2]_.
 
 Input observable quantities
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
