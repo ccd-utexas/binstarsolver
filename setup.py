@@ -55,11 +55,7 @@ setup(
     },
     # Data files included in installed packages.
     package_data={
-        'binstarsolver': [
-            'test_yes_ltcurve_no_radvels.json',
-            'test_yes_ltcurve_yes_radvels.json',
-            'test_no_ltcurve_yes_radvels.json'
-            ],
+        #'sample': ['package_data.dat'],
     },
     # Data files not included in installed packages. 'package_data' is preferred approach.
     # http://docs.python.org/3.4/distutils/setupscript.html#installing-additional-files
