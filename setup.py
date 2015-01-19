@@ -1,4 +1,8 @@
 #!/usr/bin/env python
+"""
+setup.py adapted from https://github.com/pypa/sampleproject
+
+"""
 
 from __future__ import absolute_import, print_function, division
 from setuptools import setup, find_packages
