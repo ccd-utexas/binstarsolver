@@ -1,3 +1,4 @@
-# INSTALL
+INSTALL
+=======
 
 TODO: Example installation.
