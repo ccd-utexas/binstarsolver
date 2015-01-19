@@ -1,7 +1,7 @@
 binstarsolver
 =============
 
-Estimate physical quantities of an eclipsing, spectroscopic binary star system from observed lightcurves and radial velocities.
+Estimate physical quantities of a binary star system from observed quantities.
 
 Description
 -----------
