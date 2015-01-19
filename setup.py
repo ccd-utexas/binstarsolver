@@ -5,9 +5,9 @@ setup.py adapted from https://github.com/pypa/sampleproject
 """
 
 from __future__ import absolute_import, print_function, division
-from setuptools import setup, find_packages
-from codecs import open
 from os import path
+from codecs import open
+from setuptools import setup, find_packages
 
 # Fetch long_description from DESCRIPTION.rst.
 here = path.abspath(path.dirname(__file__))
