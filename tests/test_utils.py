@@ -143,6 +143,13 @@ def test_calc_incl_from_radii_ratios_phase_incl(radii_ratio_lt=0.539115831461792
                                                 incl_init=np.deg2rad(85.0),
                                                 show_plot=False,
                                                 incl=1.5514042883817927):
+    """Test that calculations are correct using example from section 7.3 of [1]_
+
+    References
+    ----------
+    .. [1] Budding, 2007, Introduction to Astronomical Photometry
+
+    """
     assert np.isclose(bss.utils.calc_incl_from_radii_ratios_phase_incl(radii_ratio_lt=radii_ratio_lt,
                                                                        phase_orb_ext=phase_orb_ext,
                                                                        phase_orb_int=phase_orb_int,
