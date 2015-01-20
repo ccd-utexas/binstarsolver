@@ -278,7 +278,7 @@ def calc_radii_ratio_from_rads(radius_sep_s, radius_sep_g):
 
 
 def calc_incl_from_radii_ratios_phase_incl(radii_ratio_lt, phase_orb_ext, phase_orb_int,
-                                incl_init=np.deg2rad(85.0), show_plot=True):
+                                           incl_init=np.deg2rad(85.0), show_plot=False):
     """Calculate inclination angle by minimizing difference of ratios of stellar radii as calulated
     from light levels and lightcurve events (tangencies) for various values of inclination.
     
