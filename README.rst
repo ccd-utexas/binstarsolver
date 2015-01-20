@@ -22,6 +22,14 @@ $ git clone https://github.com/ccd-utexas/binstarsolver.git
 $ cd binstarsolver
 $ python setup.py install
 
+Testing
+-------
+
+::
+
+$ cd binstarsolver
+$ py.test
+
 Contributing
 ------------
 
