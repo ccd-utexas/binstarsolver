@@ -5,7 +5,7 @@ https://github.com/numpy/numpy/blob/master/doc/example.py
 
 """
 
-from __future__ import absolute_import, print_function, division
+from __future__ import absolute_import, division, print_function
 import sys
 import numpy as np
 import scipy.optimize as sci_opt
