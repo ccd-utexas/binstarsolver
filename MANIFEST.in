@@ -1,0 +1,4 @@
+include DESCRIPTION.rst
+
+# TODO: Make and include test suite
+# recursive-include tests *
