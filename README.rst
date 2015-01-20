@@ -16,7 +16,11 @@ See repository `wiki <https://github.com/ccd-utexas/binstarsolver/wiki>`_.
 Installation
 ------------
 
-See INSTALL.rst.
+::
+
+$ git clone https://github.com/ccd-utexas/binstarsolver.git
+$ cd binstarsolver
+$ python setup.py install
 
 Contributing
 ------------
