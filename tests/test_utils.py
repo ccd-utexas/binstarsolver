@@ -34,7 +34,10 @@ def test_calc_flux_intg_ratio_from_mags(mag_1=9.6, mag_2=6.3, flux_intg_ratio=0.
     return None
 
 
-def test_calc_flux_intg_rel_g_from_light(light_oc=0.898, light_ref=1.0, flux_intg_rel_g=0.898):
+def test_calc_fluxes_intg_rel_from_light(light_oc=0.898,
+                                         light_ref=1.0,
+                                         flux_intg_rel_g=0.898,
+                                         flux_intg_rel_s=0.102):
     """Test that calculations are correct using example from section 7.3, page 261 of [1]_
 
     References
@@ -42,23 +45,9 @@ def test_calc_flux_intg_rel_g_from_light(light_oc=0.898, light_ref=1.0, flux_int
     .. [1] Budding, 2007, Introduction to Astronomical Photometry
 
     """
-    assert np.isclose(bss.utils.calc_flux_intg_rel_g_from_light(light_oc=light_oc,
+    assert np.isclose(bss.utils.calc_fluxes_intg_rel_from_light(light_oc=light_oc,
                                                                 light_ref=light_ref),
-                      flux_intg_rel_g)
-    return None
-
-
-def test_calc_flux_intg_rel_s_from_light(light_oc=0.898, light_ref=1.0, flux_intg_rel_s=0.102): 
-    """Test that calculations are correct using example from section 7.3, page 261 of [1]_
-
-    References
-    ----------
-    .. [1] Budding, 2007, Introduction to Astronomical Photometry
-
-    """
-    assert np.isclose(bss.utils.calc_flux_intg_rel_s_from_light(light_oc=light_oc,
-                                                                light_ref=light_ref),
-                      flux_intg_rel_s)
+                      (flux_intg_rel_g, flux_intg_rel_s)).all()
     return None
 
 
@@ -113,9 +102,10 @@ def test_calc_radii_ratio_from_light(light_oc=0.898,
     return None
 
 
-def test_calc_radius_sep_g_from_sep(sep_proj_ext=0.213871189506,
-                                    sep_proj_int=0.0640431640294,
-                                    radius_sep_g=0.138957176768):
+def test_calc_radii_sep_from_seps(sep_proj_ext=0.213871189506,
+                                  sep_proj_int=0.0640431640294,
+                                  radius_sep_g=0.138957176768,
+                                  radius_sep_s=0.0749140127382):
     """Test that calculations are correct using example from section 7.3, page 261 of [1]_
 
     References
@@ -123,30 +113,14 @@ def test_calc_radius_sep_g_from_sep(sep_proj_ext=0.213871189506,
     .. [1] Budding, 2007, Introduction to Astronomical Photometry
 
     """
-    assert np.isclose(bss.utils.calc_radius_sep_g_from_sep(sep_proj_ext=sep_proj_ext,
-                                                           sep_proj_int=sep_proj_int),
-                      radius_sep_g)
+    assert np.isclose(bss.utils.calc_radii_sep_from_seps(sep_proj_ext=sep_proj_ext,
+                                                         sep_proj_int=sep_proj_int),
+                      (radius_sep_g, radius_sep_s)).all()
     return None
 
 
-def test_calc_radius_sep_s_from_sep(sep_proj_ext=0.213871189506,
-                                    sep_proj_int=0.0640431640294,
-                                    radius_sep_s=0.0749140127382):
-    """Test that calculations are correct using example from section 7.3, page 261 of [1]_
-
-    References
-    ----------
-    .. [1] Budding, 2007, Introduction to Astronomical Photometry
-
-    """
-    assert np.isclose(bss.utils.calc_radius_sep_s_from_sep(sep_proj_ext=sep_proj_ext,
-                                                           sep_proj_int=sep_proj_int),
-                      radius_sep_s)
-    return None
-
-
-def test_calc_radii_ratio_from_rads(radius_sep_s=0.0749140127382,
-                                    radius_sep_g=0.138957176768,
+def test_calc_radii_ratio_from_rads(radius_sep_g=0.138957176768,
+                                    radius_sep_s=0.0749140127382,
                                     radii_ratio=0.53911582316839601):
     """Test that calculations are correct using example from section 7.3, page 261 of [1]_
 
@@ -155,8 +129,8 @@ def test_calc_radii_ratio_from_rads(radius_sep_s=0.0749140127382,
     .. [1] Budding, 2007, Introduction to Astronomical Photometry
 
     """
-    assert np.isclose(bss.utils.calc_radii_ratio_from_rads(radius_sep_s=radius_sep_s,
-                                                           radius_sep_g=radius_sep_g),
+    assert np.isclose(bss.utils.calc_radii_ratio_from_rads(radius_sep_g=radius_sep_g,
+                                                           radius_sep_s=radius_sep_s),
                       radii_ratio)
     return None
 
