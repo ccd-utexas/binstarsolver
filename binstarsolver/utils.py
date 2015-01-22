@@ -7,9 +7,36 @@ from __future__ import absolute_import, division, print_function
 import numpy as np
 import scipy.optimize as sci_opt
 import scipy.constants as sci_con
-import astropy.constants as ast_con
 import matplotlib.pyplot as plt
-from networkx.algorithms.distance_measures import radius
+
+
+def calc_flux_intg_ratio_from_mags(mag_1, mag_2):
+    """Calculate the ratio of integrated fluxes from two magnitudes.
+    
+    Parameters
+    ----------
+    mag_1 : float
+        Magnitude of source 1. Unit is magnitudes.
+    mag_2 : float
+        Magnitude of source 2. Unit is magnitudes.
+        
+    Returns
+    -------
+    flux_intg_ratio : float
+        Ratio of fluxes for sources 1 and 2 as flux_1 / flux_2. Unitless.
+    
+    Notes
+    -----
+    flux_1 / flux_2 = 100**((mag_2 - mag_1)/5)
+    From equation 3.3 in section 3.2 of [1]_.
+    
+    References
+    ----------
+    .. [1] Carroll and Ostlie, 2007, An Introduction to Modern Astrophysics
+    
+    """
+    flux_intg_ratio = 100.0**((mag_2 - mag_1)/5.0)
+    return flux_intg_ratio
 
 
 def calc_flux_intg_rel_g_from_light(light_oc, light_ref=1.0):
