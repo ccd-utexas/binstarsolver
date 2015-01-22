@@ -10,7 +10,6 @@ References
 
 
 from __future__ import absolute_import, division, print_function
-import sys
 import numpy as np
 import binstarsolver as bss
 
@@ -157,3 +156,4 @@ def test_calc_incl_from_radii_ratios_phase_incl(radii_ratio_lt=0.539115831461792
                                                                        show_plot=show_plot),
                       incl)
     return None
+

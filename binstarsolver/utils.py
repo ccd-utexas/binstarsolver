@@ -1,17 +1,15 @@
 """Utilities for calculating physical quantities from observed quantities.
 
-Docstrings are adapted from `numpy` convention:
-https://github.com/numpy/numpy/blob/master/doc/example.py
-
 """
 
+
 from __future__ import absolute_import, division, print_function
-import sys
 import numpy as np
 import scipy.optimize as sci_opt
 import scipy.constants as sci_con
 import astropy.constants as ast_con
 import matplotlib.pyplot as plt
+from networkx.algorithms.distance_measures import radius
 
 
 def calc_flux_intg_rel_g_from_light(light_oc, light_ref=1.0):
@@ -165,6 +163,8 @@ def calc_radii_ratio_from_light(light_oc, light_tr, light_ref=1.0):
 
     Notes
     -----
+    Note: Method may not be valid for stars in different stages of evolution or for radii ratios > 10
+    (e.g. a binary system with main sequence star and a red giant)
     radii_ratio = radius_s / radius_g
     radii_ratio = sqrt((light_ref - light_tr) / light_oc)
     From equation 7.8 in section 7.3 of [1]_.
@@ -185,10 +185,10 @@ def calc_radius_sep_g_from_sep(sep_proj_ext, sep_proj_int):
     Parameters
     ----------
     sep_proj_ext : float
-        Projected separation of star centers at external tangencies
+        Projected separation of star centers at external tangencies.
         (e.g. begin ingress, end egress). Unit is star-star separation distance.
     sep_proj_int : float
-        Projected separation of star centers at internal tangencies
+        Projected separation of star centers at internal tangencies.
         (e.g. end ingress, begin egress). Unit is star-star separation distance.
     
     Returns
@@ -196,12 +196,18 @@ def calc_radius_sep_g_from_sep(sep_proj_ext, sep_proj_int):
     radius_sep_g : float
         Radius of greater-sized star. Unit is star-star separation distance.
     
+    See Also
+    --------
+    calc_radii_ratio_from_light, calc_radius_sep_s_from_sep, calc_radius_from_velrs_times 
+    
     Notes
     -----
+    Note: Method does not assume an inclination.
     radii_ratio = radius_sep_s / radius_sep_g
     sep_proj_ext = radius_sep_g * (1 + radii_ratio)
     sep_proj_int = radius_sep_g * (1 - radii_ratio)
     => sep_proj_ext + sep_proj_int = 2 * radius_sep_g
+       radius_sep_g = (sep_proj_ext + sep_proj_int) / 2 
     From equations 7.8, 7.9, 7.10 in section 7.3 of [1]_.
     
     References
@@ -220,23 +226,29 @@ def calc_radius_sep_s_from_sep(sep_proj_ext, sep_proj_int):
     Parameters
     ----------
     sep_proj_ext : float
-        Projected separation of star centers at external tangencies
+        Projected separation of star centers at external tangencies.
         (e.g. begin ingress, end egress). Unit is star-star separation distance.
     sep_proj_int : float
-        Projected separation of star centers at internal tangencies
+        Projected separation of star centers at internal tangencies.
         (e.g. end ingress, begin egress). Unit is star-star separation distance.
     
     Returns
     -------
     radius_sep_s : float
         Radius of smaller-sized star. Unit is star-star separation distance.
+        
+    See Also
+    --------
+    calc_radii_ratio_from_light, calc_radius_sep_g_from_sep, calc_radius_from_velrs_times
     
     Notes
     -----
+    Note: Method does not assume an inclination.
     radii_ratio = radius_sep_s / radius_sep_g
     sep_proj_ext = radius_sep_g * (1 + radii_ratio)
     sep_proj_int = radius_sep_g * (1 - radii_ratio)
     => sep_proj_ext - sep_proj_int = 2 * radius_sep_g * radii_ratio = 2 * radius_sep_s
+       radius_sep_s = (sep_proj_ext - sep_proj_int) / 2
     From equations 7.8, 7.9, 7.10 in section 7.3 of [1]_.
     
     References
@@ -307,11 +319,13 @@ def calc_incl_from_radii_ratios_phase_incl(radii_ratio_lt, phase_orb_ext, phase_
     
     See Also
     --------
-    calc_sep_proj_from_incl_phase, calc_radius_sep_s_from_sep, calc_radius_sep_g_from_sep, calc_radii_ratio_from_rads
+    calc_sep_proj_from_incl_phase, calc_radius_sep_s_from_sep, calc_radius_sep_g_from_sep, calc_radii_ratio_from_light
     
     Notes
     ----
-    Compares two independent ways of calculating radii_ratio in order to infer inclination angle.
+    Note: Method uses calc_radii_ratio_from_light, which may not be valid for stars in different stages of evolution
+    or for radii ratios > 10 (e.g. a binary system with main sequence star and a red giant)
+    Compares two independent ways of calculating radii_ratio in order to infer inclination angle. 
     Equations from section 7.3 of [1]_.
     
     References
@@ -455,17 +469,51 @@ def calc_radius_from_radius_sep(radius_sep, sep):
     return radius
 
 
-def calc_radius_from_velrs():
-    pass
-# TODO: Resume here 1/17/2015. Add method from p191, eqns 7.8, 7.9, Carroll
-# for calculating radius assuming radius is ~90 deg. Method does not agree with inclination solver.
-# Add disclaimer for inclination solver, radius from lt method that radius from lt may not work
-#    for stars off of main sequence.
-# Compare:
-#   radii ratios with ~90deg assumption
-#   radii ratios from lt
-#   radii ratios from timings
-# Check that calculated luminosity ratios match
+def calc_radius_from_velrs_times(velr_1, velr_2, time_1, time_2):
+    """Calculate the radius of a star from the radial velocities of the stars and\
+    relative times of eclipse events. Assumes inclination = 90 deg, no eccentricity. 
+    
+    Parameters
+    ----------
+    velr_1 : float
+        Observed radial velocity of star 1. Unit is m/s.
+    velr_2 : float
+        Observed radial velocity of star 2. Unit is m/s.
+    time_1 : float
+        Relative time of beginning of ingress (first contact). Unit is seconds.
+    time_2 : float
+        Relative time of end of ingress or beginning of egress.
+        during primary minimum (occultation event). Unit is seconds.
+        If eclipse is not total, relative time of end of ingress == relative time of beginning of egress.
+        For radius of smaller-sized star: time_2 = relative time of end of ingress.
+        For radius of greater-sized star: time_2 = relative time of beginning of egress.
+    
+    Returns
+    -------
+    radius : float
+        Radius of star. Unit is meters.
+        For radius of smaller-sized star: time_2 = relative time of end of ingress.
+        For radius of greater-sized star: time_2 = relative time of beginning of egress.
+        
+    See Also
+    --------
+    calc_radii_ratio_from_light, calc_radius_sep_g_from_sep, calc_radius_sep_s_from_sep
+        
+    Notes
+    -----
+    Note: Calculated radius may not agree with radii from methods that do not  
+    rs = (vr1 + vr2)/2 * (t2 - t1), t2 is end of ingress
+    rg = (vr1 + vr2)/2 * (t2 - t1), t2 is beginning of egress
+    From equations 7.8, 7.9 in section 7.3 of [1]_.
+    
+    References
+    ----------
+    .. [1] Carroll and Ostlie, 2007, An Introduction to Modern Astrophysics
+    
+    """
+    radius = ((velr_1 + velr_2)/2.0) * (time_2 - time_1)
+    return radius
+
 
 def calc_mass_ratio_from_velrs(velr_1, velr_2):
     """Calculate ratio of stellar masses from observed radial velocities.

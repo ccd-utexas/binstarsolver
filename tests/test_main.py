@@ -2,9 +2,9 @@
 
 """
 
+
 from __future__ import absolute_import, print_function, division
-import sys
-import pytest
-import binstarsolver
+import binstarsolver as bss
+
 
 # TODO: test calling as console script.
