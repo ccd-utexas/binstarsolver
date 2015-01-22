@@ -242,6 +242,7 @@ def calc_radii_ratio_from_rads(radius_sep_g, radius_sep_s):
     -------
     radii_ratio_rad : float
         Ratio of radii of smaller-sized star to greater-sized star calculated from star radii.
+        radii_ratio = radius_s / radius_g  where radius_s,radius_g are radii of smaller-,greater-sized stars.
     
     Notes
     -----
@@ -307,6 +308,12 @@ def calc_incl_from_radii_ratios_phase_incl(radii_ratio_lt, phase_orb_ext, phase_
     radii_sep = lambda incl: calc_radii_sep_from_seps(sep_proj_ext=sep_proj_ext(incl=incl),
                                                       sep_proj_int=sep_proj_int(incl=incl))
     radii_ratio_rad = lambda incl: calc_radii_ratio_from_rads(*radii_sep(incl=incl))
+    if radii_ratio_rad < 0.1:
+        print(("WARNING: Ratio smaller star's radius to greater star's radius is < 0.1.\n" +
+               "    as calculated from eclipse timing events. The radii ratio as calculated\n" +
+               "    from light levels may not be valid (e.g. for a binary system with a\n" +
+               "    main sequence star and red giant."),
+              file=sys.stderr)
     # Minimize difference between independent radii_ratio values.
     diff_radii_ratios = lambda incl: abs(radii_ratio_lt - radii_ratio_rad(incl=incl))
     result = sci_opt.minimize(fun=diff_radii_ratios, x0=incl_init)
