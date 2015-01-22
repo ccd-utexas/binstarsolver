@@ -62,7 +62,9 @@ def test_calc_flux_intg_rel_s_from_light(light_oc=0.898, light_ref=1.0, flux_int
     return None
 
 
-def test_calc_phase_orb_from_time_period(time_event=12.3, period=360.0, time_mideclipse=0.0,
+def test_calc_phase_orb_from_time_period(time_event=12.3,
+                                         period=360.0,
+                                         time_mideclipse=0.0,
                                          phase_orb=np.deg2rad(12.3)):
     """Test that calculations are correct using example from section 7.3, page 261 of [1]_
 
@@ -71,7 +73,8 @@ def test_calc_phase_orb_from_time_period(time_event=12.3, period=360.0, time_mid
     .. [1] Budding, 2007, Introduction to Astronomical Photometry
 
     """
-    assert np.isclose(bss.utils.calc_phase_orb_from_time_period(time_event=time_event, period=period,
+    assert np.isclose(bss.utils.calc_phase_orb_from_time_period(time_event=time_event,
+                                                                period=period,
                                                                 time_mideclipse=time_mideclipse),
                       phase_orb)
     return None
@@ -92,8 +95,10 @@ def test_calc_sep_proj_from_incl_phase(incl=1.5514042883817927,
     return None
 
 
-def test_calc_radii_ratio_from_light(light_oc=0.898, light_tr=0.739,
-                                     light_ref=1.0, radii_ratio_lt=0.53911583146179209):
+def test_calc_radii_ratio_from_light(light_oc=0.898,
+                                     light_tr=0.739,
+                                     light_ref=1.0,
+                                     radii_ratio_lt=0.53911583146179209):
     """Test that calculations are correct using example from section 7.3, page 261 of [1]_
 
     References
@@ -178,37 +183,156 @@ def test_calc_incl_from_radii_ratios_phase_incl(radii_ratio_lt=0.539115831461792
     return None
 
 
-def test_calc_semimaj_axis_from_period_velr_incl(period, velr, incl):
-    pass
+def test_calc_semimaj_axis_from_period_velr_incl(period=271209600.0,
+                                                 velr=33000.0,
+                                                 incl=1.5708021113113511,
+                                                 semimaj_axis=1424423498981.198):
+    """Test that calculations are correct using examples 7.3.1, 7.3.2 of [1]_
+
+    References
+    ----------
+    .. [1] Carroll and Ostlie, 2007, An Introduction to Modern Astrophysics
+
+    """
+    assert np.isclose(bss.utils.calc_semimaj_axis_from_period_velr_incl(period=period,
+                                                                        velr=velr,
+                                                                        incl=incl),
+                      semimaj_axis)
+    return None
 
 
-def test_calc_sep_from_semimaj_axes(axis_1, axis_2):
-    pass
+def test_calc_sep_from_semimaj_axes(axis_1=1424423498981.198,
+                                    axis_2=133809480209.56334,
+                                    sep=1558232979214.5923):
+    """Test that calculations are correct using examples 7.3.1, 7.3.2 of [1]_
+
+    References
+    ----------
+    .. [1] Carroll and Ostlie, 2007, An Introduction to Modern Astrophysics
+
+    """
+    assert np.isclose(bss.utils.calc_sep_from_semimaj_axes(axis_1=axis_1,
+                                                           axis_2=axis_2),
+                      sep)
+    return None
 
 
-def test_calc_radius_from_radius_sep(radius_sep, sep):
-    pass
+def test_calc_radius_from_radius_sep(radius_sep=0.16388077362590259,
+                                     sep=1558232979214.5923,
+                                     radius=255364426123.08237):
+    """Test that calculations are correct using examples 7.3.1, 7.3.2 of [1]_
+
+    References
+    ----------
+    .. [1] Carroll and Ostlie, 2007, An Introduction to Modern Astrophysics
+
+    """
+    assert np.isclose(bss.utils.calc_radius_from_radius_sep(radius_sep=radius_sep,
+                                                            sep=sep),
+                      radius)
+    return None
 
 
-def test_calc_radius_from_velrs_times(velr_1, velr_2, time_1, time_2):
-    pass
+def test_calc_radius_from_velrs_times(velr_1=33000.0,
+                                      velr_2=3100.0,
+                                      time_1=-7126920.0,
+                                      time_2=7084800.0,
+                                      radius=256521546000.0):
+    """Test that calculations are correct using examples 7.3.1, 7.3.2 of [1]_
+
+    References
+    ----------
+    .. [1] Carroll and Ostlie, 2007, An Introduction to Modern Astrophysics
+
+    """
+    assert np.isclose(bss.utils.calc_radius_from_velrs_times(velr_1=velr_1,
+                                                             velr_2=velr_2,
+                                                             time_1=time_1,
+                                                             time_2=time_2),
+                      radius)
+    return None
 
 
-def test_calc_mass_ratio_from_velrs(velr_1, velr_2):
-    pass
+def test_calc_mass_ratio_from_velrs(velr_1=33000.0,
+                                    velr_2=3100.0,
+                                    mass_ratio=0.09393939393939393):
+    """Test that calculations are correct using examples 7.3.1, 7.3.2 of [1]_
+
+    References
+    ----------
+    .. [1] Carroll and Ostlie, 2007, An Introduction to Modern Astrophysics
+
+    """
+    assert np.isclose(bss.utils.calc_mass_ratio_from_velrs(velr_1=velr_1,
+                                                           velr_2=velr_2),
+                      mass_ratio)
+    return None
 
 
-def test_calc_mass_sum_from_period_velrs_incl(period, velr_1, velr_2, incl):
-    pass
+def test_calc_mass_sum_from_period_velrs_incl(period=271209600.0,
+                                              velr_1=33000.0,
+                                              velr_2=3100.0,
+                                              incl=1.5708021113113511,
+                                              mass_sum=3.0427831666779509e+31):
+    """Test that calculations are correct using examples 7.3.1, 7.3.2 of [1]_
+
+    References
+    ----------
+    .. [1] Carroll and Ostlie, 2007, An Introduction to Modern Astrophysics
+
+    """
+    assert np.isclose(bss.utils.calc_mass_sum_from_period_velrs_incl(period=period,
+                                                                     velr_1=velr_1,
+                                                                     velr_2=velr_2,
+                                                                     incl=incl),
+                      mass_sum)
+    return None
 
 
-def test_calc_masses_from_ratio_sum(mass_ratio, mass_sum):
-    pass
+def test_calc_masses_from_ratio_sum(mass_ratio=0.09393939393939393,
+                                    mass_sum=3.0427831666779509e+31,
+                                    mass_1=2.6129162927151373e+30,
+                                    mass_2=2.7814915374064368e+31):
+    """Test that calculations are correct using examples 7.3.1, 7.3.2 of [1]_
+
+    References
+    ----------
+    .. [1] Carroll and Ostlie, 2007, An Introduction to Modern Astrophysics
+
+    """
+    assert np.isclose(bss.utils.calc_masses_from_ratio_sum(mass_ratio=mass_ratio,
+                                                           mass_sum=mass_sum),
+                      (mass_1, mass_2)).all()
+    return None
 
 
-def test_calc_flux_rad_ratio_from_light(light_oc, light_tr, light_ref=1.0):
-    pass
+def test_calc_flux_rad_ratio_from_light(light_oc=0.04786300923226385,
+                                        light_tr=0.7585775750291839,
+                                        light_ref=1.0,
+                                        flux_rad_ratio=3.94386308928358):
+    """Test that calculations are correct using examples 7.3.1, 7.3.2 of [1]_
+
+    References
+    ----------
+    .. [1] Carroll and Ostlie, 2007, An Introduction to Modern Astrophysics
+
+    """
+    assert np.isclose(bss.utils.calc_flux_rad_ratio_from_light(light_oc=light_oc,
+                                                               light_tr=light_tr,
+                                                               light_ref=light_ref),
+                      flux_rad_ratio)
+    return None
 
 
-def test_calc_teff_ratio_from_flux_rad_ratio(flux_rad_ratio):
-    pass
+def test_calc_teff_ratio_from_flux_rad_ratio(flux_rad_ratio=3.94386308928358,
+                                             teff_ratio=1.409225384334092):
+    """Test that calculations are correct using examples 7.3.1, 7.3.2 of [1]_
+
+    References
+    ----------
+    .. [1] Carroll and Ostlie, 2007, An Introduction to Modern Astrophysics
+
+    """
+    assert np.isclose(bss.utils.calc_teff_ratio_from_flux_rad_ratio(flux_rad_ratio=flux_rad_ratio),
+                      teff_ratio)
+    return None

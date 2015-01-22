@@ -4,6 +4,7 @@
 
 
 from __future__ import absolute_import, division, print_function
+import sys
 import numpy as np
 import scipy.optimize as sci_opt
 import scipy.constants as sci_con
@@ -395,16 +396,16 @@ def calc_incl_from_radii_ratios_phase_incl(radii_ratio_lt, phase_orb_ext, phase_
     if diff_radii_ratios(incl) < 1e-3:
         print("INFO: Inclination yields self-consistent solution for model.")
     else:
-        # Note: Printing to stderr will delay output if called from within a loop.
         print(("WARNING: Inclination does not yield self-consistent solution for model.\n" +
                "    Input parameters cannot be fit by model:\n" +
-               "    radii_ratio_lt  = {rrl}\n" +
+               "    radii_ratio_lt   = {rrl}\n" +
                "    phase_orb_ext    = {poe}\n" +
                "    phase_orb_int    = {poi}\n" +
                "    incl_init        = {ii}").format(rrl=radii_ratio_lt,
                                                      poe=phase_orb_ext,
                                                      poi=phase_orb_int,
-                                                     ii=incl_init))
+                                                     ii=incl_init),
+              file=sys.stderr)
     return incl
 
 
