@@ -1,5 +1,9 @@
 """Tests for binstarsolver/main.py.
 
+Notes
+-----
+Tests are executed using pytest.
+
 """
 
 
