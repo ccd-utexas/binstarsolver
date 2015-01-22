@@ -1,21 +1,47 @@
 """Utilities for calculating physical quantities from observed quantities.
 
-Docstrings are adapted from `numpy` convention:
-https://github.com/numpy/numpy/blob/master/doc/example.py
-
 """
+
 
 from __future__ import absolute_import, division, print_function
 import sys
 import numpy as np
 import scipy.optimize as sci_opt
 import scipy.constants as sci_con
-import astropy.constants as ast_con
 import matplotlib.pyplot as plt
 
 
-def calc_flux_intg_rel_g_from_light(light_oc, light_ref=1.0):
-    """Calculate integrated flux of the greater sized star relative to the total integrated flux.
+def calc_flux_intg_ratio_from_mags(mag_1, mag_2):
+    """Calculate the ratio of integrated fluxes from two magnitudes.
+    
+    Parameters
+    ----------
+    mag_1 : float
+        Magnitude of source 1. Unit is magnitudes.
+    mag_2 : float
+        Magnitude of source 2. Unit is magnitudes.
+        
+    Returns
+    -------
+    flux_intg_ratio : float
+        Ratio of fluxes for sources 1 and 2 as flux_1 / flux_2. Unitless.
+    
+    Notes
+    -----
+    flux_1 / flux_2 = 100**((mag_2 - mag_1)/5)
+    From equation 3.3 in section 3.2 of [1]_.
+    
+    References
+    ----------
+    .. [1] Carroll and Ostlie, 2007, An Introduction to Modern Astrophysics
+    
+    """
+    flux_intg_ratio = 100.0**((mag_2 - mag_1)/5.0)
+    return flux_intg_ratio
+
+
+def calc_fluxes_intg_rel_from_light(light_oc, light_ref=1.0):
+    """Calculate integrated fluxes of the of both binary stars relative to the total integrated flux.
     
     Parameters
     ----------
@@ -29,39 +55,13 @@ def calc_flux_intg_rel_g_from_light(light_oc, light_ref=1.0):
     -------
     flux_intg_rel_g : float
         Integrated flux of greater-sized star as a fraction of total integrated flux.
-    
-    Notes
-    -----
-    flux_intg_rel_g = light_oc / light_ref
-    From equation 7.2 in section 7.3 of [1]_.
-    
-    References
-    ----------
-    .. [1] Budding, 2007, Introduction to Astronomical Photometry
-    
-    """
-    flux_intg_rel_g = light_oc / light_ref
-    return flux_intg_rel_g
-
-
-def calc_flux_intg_rel_s_from_light(light_oc, light_ref=1.0):
-    """Calculate integrated flux of the smaller sized star relative to the total integrated flux.
-
-    Parameters
-    ----------
-    light_oc : float
-        Light level during occultation (primary eclipse). Light level is the average of the flat region at the bottom
-        of one of the eclipse minima. The event is a total eclipse of the star with the smaller radius.
-    light_ref : {1.0}, float, optional
-        Reference for light levels outside of eclipse. Typically total system light is normalized to 1.0.
-    
-    Returns
-    -------
     flux_intg_rel_s : float
         Integrated flux of greater-sized star as a fraction of total integrated flux.
     
     Notes
     -----
+    Note: Fluxes are returned as a tuple: (fg, fs)
+    flux_intg_rel_g = light_oc / light_ref
     flux_intg_rel_s = (light_ref - light_oc) / light_ref
     From equation 7.2 in section 7.3 of [1]_.
     
@@ -70,8 +70,9 @@ def calc_flux_intg_rel_s_from_light(light_oc, light_ref=1.0):
     .. [1] Budding, 2007, Introduction to Astronomical Photometry
     
     """
+    flux_intg_rel_g = light_oc / light_ref
     flux_intg_rel_s = (light_ref - light_oc) / light_ref
-    return flux_intg_rel_s
+    return (flux_intg_rel_g, flux_intg_rel_s)
 
 
 def calc_phase_orb_from_time_period(time_event, period, time_mideclipse=0.0):
@@ -165,6 +166,8 @@ def calc_radii_ratio_from_light(light_oc, light_tr, light_ref=1.0):
 
     Notes
     -----
+    Note: Method may not be valid for stars in different stages of evolution or for radii ratios > 10
+    (e.g. a binary system with main sequence star and a red giant)
     radii_ratio = radius_s / radius_g
     radii_ratio = sqrt((light_ref - light_tr) / light_oc)
     From equation 7.8 in section 7.3 of [1]_.
@@ -178,30 +181,41 @@ def calc_radii_ratio_from_light(light_oc, light_tr, light_ref=1.0):
     return radii_ratio_lt
 
 
-def calc_radius_sep_g_from_sep(sep_proj_ext, sep_proj_int):
-    """Calculate radius of greater-sized star from projections of star separations
-    at external and internal tangencies.
+def calc_radii_sep_from_seps(sep_proj_ext, sep_proj_int):
+    """Calculate the radii of both binary stars from projections of star separations
+    at external and internal tangencies. Method is independent of any inclination assumptions.
     
     Parameters
     ----------
     sep_proj_ext : float
-        Projected separation of star centers at external tangencies
+        Projected separation of star centers at external tangencies.
         (e.g. begin ingress, end egress). Unit is star-star separation distance.
     sep_proj_int : float
-        Projected separation of star centers at internal tangencies
+        Projected separation of star centers at internal tangencies.
         (e.g. end ingress, begin egress). Unit is star-star separation distance.
     
     Returns
     -------
     radius_sep_g : float
         Radius of greater-sized star. Unit is star-star separation distance.
+    radius_sep_s : float
+        Radius of smaller-sized star. Unit is star-star separation distance.
+    
+    See Also
+    --------
+    calc_radii_ratio_from_light, calc_radius_from_velrs_times 
     
     Notes
     -----
+    Note: Method does not assume an inclination.
+    Note: Radii are returned as a tuple: (rg, rs)
     radii_ratio = radius_sep_s / radius_sep_g
     sep_proj_ext = radius_sep_g * (1 + radii_ratio)
     sep_proj_int = radius_sep_g * (1 - radii_ratio)
     => sep_proj_ext + sep_proj_int = 2 * radius_sep_g
+       radius_sep_g = (sep_proj_ext + sep_proj_int) / 2
+    => sep_proj_ext - sep_proj_int = 2 * radius_sep_g * radii_ratio = 2 * radius_sep_s
+       radius_sep_s = (sep_proj_ext - sep_proj_int) / 2
     From equations 7.8, 7.9, 7.10 in section 7.3 of [1]_.
     
     References
@@ -210,53 +224,19 @@ def calc_radius_sep_g_from_sep(sep_proj_ext, sep_proj_int):
     
     """
     radius_sep_g = (sep_proj_ext + sep_proj_int) / 2.0
-    return radius_sep_g
+    radius_sep_s = (sep_proj_ext - sep_proj_int) / 2.0    
+    return (radius_sep_g, radius_sep_s) 
 
 
-def calc_radius_sep_s_from_sep(sep_proj_ext, sep_proj_int):
-    """Calculate radius of smaller-sized star from projections of star separations
-    at external and internal tangencies.
-    
-    Parameters
-    ----------
-    sep_proj_ext : float
-        Projected separation of star centers at external tangencies
-        (e.g. begin ingress, end egress). Unit is star-star separation distance.
-    sep_proj_int : float
-        Projected separation of star centers at internal tangencies
-        (e.g. end ingress, begin egress). Unit is star-star separation distance.
-    
-    Returns
-    -------
-    radius_sep_s : float
-        Radius of smaller-sized star. Unit is star-star separation distance.
-    
-    Notes
-    -----
-    radii_ratio = radius_sep_s / radius_sep_g
-    sep_proj_ext = radius_sep_g * (1 + radii_ratio)
-    sep_proj_int = radius_sep_g * (1 - radii_ratio)
-    => sep_proj_ext - sep_proj_int = 2 * radius_sep_g * radii_ratio = 2 * radius_sep_s
-    From equations 7.8, 7.9, 7.10 in section 7.3 of [1]_.
-    
-    References
-    ----------
-    .. [1] Budding, 2007, Introduction to Astronomical Photometry
-    
-    """
-    radius_sep_s = (sep_proj_ext - sep_proj_int) / 2.0
-    return radius_sep_s
-
-
-def calc_radii_ratio_from_rads(radius_sep_s, radius_sep_g):
+def calc_radii_ratio_from_rads(radius_sep_g, radius_sep_s):
     """Calculate ratio of radii of smaller-sized star to greater-sized star.
     
     Parameters
     ----------
-    radius_sep_s : float
-        Radius of smaller-sized star. Unit is star-star separation distance.
     radius_sep_g : float
         Radius of greater-sized star. Unit is star-star separation distance.
+    radius_sep_s : float
+        Radius of smaller-sized star. Unit is star-star separation distance.
     
     Returns
     -------
@@ -307,11 +287,13 @@ def calc_incl_from_radii_ratios_phase_incl(radii_ratio_lt, phase_orb_ext, phase_
     
     See Also
     --------
-    calc_sep_proj_from_incl_phase, calc_radius_sep_s_from_sep, calc_radius_sep_g_from_sep, calc_radii_ratio_from_rads
+    calc_sep_proj_from_incl_phase, calc_radius_sep_s_from_sep, calc_radius_sep_g_from_sep, calc_radii_ratio_from_light
     
     Notes
-    ----
-    Compares two independent ways of calculating radii_ratio in order to infer inclination angle.
+    -----
+    Note: Method uses calc_radii_ratio_from_light, which may not be valid for stars in different stages of evolution
+    or for radii ratios > 10 (e.g. a binary system with main sequence star and a red giant)
+    Compares two independent ways of calculating radii_ratio in order to infer inclination angle. 
     Equations from section 7.3 of [1]_.
     
     References
@@ -322,12 +304,9 @@ def calc_incl_from_radii_ratios_phase_incl(radii_ratio_lt, phase_orb_ext, phase_
     # Make radii_ratio_rad and all dependencies functions of inclination.
     sep_proj_ext = lambda incl: calc_sep_proj_from_incl_phase(incl=incl, phase_orb=phase_orb_ext)
     sep_proj_int = lambda incl: calc_sep_proj_from_incl_phase(incl=incl, phase_orb=phase_orb_int)
-    radius_sep_s = lambda incl: calc_radius_sep_s_from_sep(sep_proj_ext=sep_proj_ext(incl=incl),
-                                          sep_proj_int=sep_proj_int(incl=incl))
-    radius_sep_g = lambda incl: calc_radius_sep_g_from_sep(sep_proj_ext=sep_proj_ext(incl=incl),
-                                          sep_proj_int=sep_proj_int(incl=incl))
-    radii_ratio_rad = lambda incl: calc_radii_ratio_from_rads(radius_sep_s=radius_sep_s(incl=incl),
-                                                              radius_sep_g=radius_sep_g(incl=incl))
+    radii_sep = lambda incl: calc_radii_sep_from_seps(sep_proj_ext=sep_proj_ext(incl=incl),
+                                                      sep_proj_int=sep_proj_int(incl=incl))
+    radii_ratio_rad = lambda incl: calc_radii_ratio_from_rads(*radii_sep(incl=incl))
     # Minimize difference between independent radii_ratio values.
     diff_radii_ratios = lambda incl: abs(radii_ratio_lt - radii_ratio_rad(incl=incl))
     result = sci_opt.minimize(fun=diff_radii_ratios, x0=incl_init)
@@ -354,16 +333,17 @@ def calc_incl_from_radii_ratios_phase_incl(radii_ratio_lt, phase_orb_ext, phase_
     if diff_radii_ratios(incl) < 1e-3:
         print("INFO: Inclination yields self-consistent solution for model.")
     else:
-        # Note: Printing to stderr will delay output if called from within a loop.
+        # Note: Warning message is delayed if called within a loop in an IPython Notebook.
         print(("WARNING: Inclination does not yield self-consistent solution for model.\n" +
                "    Input parameters cannot be fit by model:\n" +
-               "    radii_ratio_lt  = {rrl}\n" +
+               "    radii_ratio_lt   = {rrl}\n" +
                "    phase_orb_ext    = {poe}\n" +
                "    phase_orb_int    = {poi}\n" +
                "    incl_init        = {ii}").format(rrl=radii_ratio_lt,
                                                      poe=phase_orb_ext,
                                                      poi=phase_orb_int,
-                                                     ii=incl_init))
+                                                     ii=incl_init),
+              file=sys.stderr)
     return incl
 
 
@@ -455,17 +435,51 @@ def calc_radius_from_radius_sep(radius_sep, sep):
     return radius
 
 
-def calc_radius_from_velrs():
-    pass
-# TODO: Resume here 1/17/2015. Add method from p191, eqns 7.8, 7.9, Carroll
-# for calculating radius assuming radius is ~90 deg. Method does not agree with inclination solver.
-# Add disclaimer for inclination solver, radius from lt method that radius from lt may not work
-#    for stars off of main sequence.
-# Compare:
-#   radii ratios with ~90deg assumption
-#   radii ratios from lt
-#   radii ratios from timings
-# Check that calculated luminosity ratios match
+def calc_radius_from_velrs_times(velr_1, velr_2, time_1, time_2):
+    """Calculate the radius of a star from the radial velocities of the stars and\
+    relative times of eclipse events. Assumes inclination = 90 deg, no eccentricity. 
+    
+    Parameters
+    ----------
+    velr_1 : float
+        Observed radial velocity of star 1. Unit is m/s.
+    velr_2 : float
+        Observed radial velocity of star 2. Unit is m/s.
+    time_1 : float
+        Relative time of beginning of ingress (first contact). Unit is seconds.
+    time_2 : float
+        Relative time of end of ingress or beginning of egress.
+        during primary minimum (occultation event). Unit is seconds.
+        If eclipse is not total, relative time of end of ingress == relative time of beginning of egress.
+        For radius of smaller-sized star: time_2 = relative time of end of ingress.
+        For radius of greater-sized star: time_2 = relative time of beginning of egress.
+    
+    Returns
+    -------
+    radius : float
+        Radius of star. Unit is meters.
+        For radius of smaller-sized star: time_2 = relative time of end of ingress.
+        For radius of greater-sized star: time_2 = relative time of beginning of egress.
+        
+    See Also
+    --------
+    calc_radii_ratio_from_light, calc_radius_sep_g_from_sep, calc_radius_sep_s_from_sep
+        
+    Notes
+    -----
+    Note: Calculated radius may not agree with radii from methods that do not  
+    rs = (vr1 + vr2)/2 * (t2 - t1), t2 is end of ingress
+    rg = (vr1 + vr2)/2 * (t2 - t1), t2 is beginning of egress
+    From equations 7.8, 7.9 in section 7.3 of [1]_.
+    
+    References
+    ----------
+    .. [1] Carroll and Ostlie, 2007, An Introduction to Modern Astrophysics
+    
+    """
+    radius = ((velr_1 + velr_2) / 2.0) * (time_2 - time_1)
+    return radius
+
 
 def calc_mass_ratio_from_velrs(velr_1, velr_2):
     """Calculate ratio of stellar masses from observed radial velocities.
@@ -558,12 +572,13 @@ def calc_masses_from_ratio_sum(mass_ratio, mass_sum):
     
     Notes
     -----
+    Note: Masses are returned as a tuple: (m1, m2)
     m1 + m2 = mass_sum
     m1 / m2 = mass_ratio
     => m1 = mass_ratio*m2
        m1 + m2 = m2*(mass_ratio + 1) = mass_sum
        m2 = mass_sum / (mass_ratio + 1)
-    Masses are returned as a tuple: (m1, m2)
+
 
     """
     mass_2 = mass_sum / (mass_ratio + 1.0)

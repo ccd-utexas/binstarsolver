@@ -1,6 +1,10 @@
-from __future__ import absolute_import, print_function, division
+"""Top-level script for calculating physical quantities from observed quantities.
 
-import binstarsolver.utils as bss_utils
+"""
+
+
+from __future__ import absolute_import, print_function, division
+from . import utils
 
 def main():
     print("main called")
