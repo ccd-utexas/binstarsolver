@@ -53,16 +53,16 @@ def calc_fluxes_intg_rel_from_light(light_oc, light_ref=1.0):
         
     Returns
     -------
-    flux_intg_rel_g : float
-        Integrated flux of greater-sized star as a fraction of total integrated flux.
     flux_intg_rel_s : float
+        Integrated flux of greater-sized star as a fraction of total integrated flux.
+    flux_intg_rel_g : float
         Integrated flux of greater-sized star as a fraction of total integrated flux.
     
     Notes
     -----
-    Note: Fluxes are returned as a tuple: (fg, fs)
-    flux_intg_rel_g = light_oc / light_ref
+    Note: Fluxes are returned as a tuple: (fs, fg)
     flux_intg_rel_s = (light_ref - light_oc) / light_ref
+    flux_intg_rel_g = light_oc / light_ref
     From equation 7.2 in section 7.3 of [1]_.
     
     References
@@ -70,9 +70,9 @@ def calc_fluxes_intg_rel_from_light(light_oc, light_ref=1.0):
     .. [1] Budding, 2007, Introduction to Astronomical Photometry
     
     """
-    flux_intg_rel_g = light_oc / light_ref
     flux_intg_rel_s = (light_ref - light_oc) / light_ref
-    return (flux_intg_rel_g, flux_intg_rel_s)
+    flux_intg_rel_g = light_oc / light_ref
+    return (flux_intg_rel_s, flux_intg_rel_g)
 
 
 def calc_phase_orb_from_time_period(time_event, period, time_mideclipse=0.0):
@@ -144,6 +144,8 @@ def calc_radii_ratio_from_light(light_oc, light_tr, light_ref=1.0):
     """Calculate ratio of radii of smaller-sized star to greater-sized star from light levels 
     during occultation and transit. Assumes L \propto r^2, no limb darkening.
     
+    Method may not be valid for radii ratios > 10. See "Notes".
+    
     Parameters
     ----------
     light_oc : float
@@ -162,14 +164,14 @@ def calc_radii_ratio_from_light(light_oc, light_tr, light_ref=1.0):
     radii_ratio_lt : float
         Ratio of radii of smaller-sized star to greater-sized star calculated from light levels
         during occultation and transit.
-        radii_ratio = radius_s / radius_g  where radius_s,radius_g are radii of smaller-,greater-sized stars.
+        radii_ratio = radius_s / radius_g
 
     Notes
     -----
     Note: Method may not be valid for stars in different stages of evolution or for radii ratios > 10
     (e.g. a binary system with main sequence star and a red giant)
     radii_ratio = radius_s / radius_g
-    radii_ratio = sqrt((light_ref - light_tr) / light_oc)
+                = sqrt((light_ref - light_tr) / light_oc)
     From equation 7.8 in section 7.3 of [1]_.
 
     References
@@ -196,10 +198,10 @@ def calc_radii_sep_from_seps(sep_proj_ext, sep_proj_int):
     
     Returns
     -------
-    radius_sep_g : float
-        Radius of greater-sized star. Unit is star-star separation distance.
     radius_sep_s : float
         Radius of smaller-sized star. Unit is star-star separation distance.
+    radius_sep_g : float
+        Radius of greater-sized star. Unit is star-star separation distance.
     
     See Also
     --------
@@ -207,15 +209,15 @@ def calc_radii_sep_from_seps(sep_proj_ext, sep_proj_int):
     
     Notes
     -----
+    Note: Radii are returned as a tuple: (rs, rg)
     Note: Method does not assume an inclination.
-    Note: Radii are returned as a tuple: (rg, rs)
     radii_ratio = radius_sep_s / radius_sep_g
     sep_proj_ext = radius_sep_g * (1 + radii_ratio)
     sep_proj_int = radius_sep_g * (1 - radii_ratio)
-    => sep_proj_ext + sep_proj_int = 2 * radius_sep_g
-       radius_sep_g = (sep_proj_ext + sep_proj_int) / 2
     => sep_proj_ext - sep_proj_int = 2 * radius_sep_g * radii_ratio = 2 * radius_sep_s
        radius_sep_s = (sep_proj_ext - sep_proj_int) / 2
+    => sep_proj_ext + sep_proj_int = 2 * radius_sep_g
+       radius_sep_g = (sep_proj_ext + sep_proj_int) / 2
     From equations 7.8, 7.9, 7.10 in section 7.3 of [1]_.
     
     References
@@ -223,26 +225,26 @@ def calc_radii_sep_from_seps(sep_proj_ext, sep_proj_int):
     .. [1] Budding, 2007, Introduction to Astronomical Photometry
     
     """
-    radius_sep_g = (sep_proj_ext + sep_proj_int) / 2.0
     radius_sep_s = (sep_proj_ext - sep_proj_int) / 2.0    
-    return (radius_sep_g, radius_sep_s) 
+    radius_sep_g = (sep_proj_ext + sep_proj_int) / 2.0
+    return (radius_sep_s, radius_sep_g) 
 
 
-def calc_radii_ratio_from_rads(radius_sep_g, radius_sep_s):
+def calc_radii_ratio_from_rads(radius_sep_s, radius_sep_g):
     """Calculate ratio of radii of smaller-sized star to greater-sized star.
     
     Parameters
     ----------
-    radius_sep_g : float
-        Radius of greater-sized star. Unit is star-star separation distance.
     radius_sep_s : float
         Radius of smaller-sized star. Unit is star-star separation distance.
+    radius_sep_g : float
+        Radius of greater-sized star. Unit is star-star separation distance.
     
     Returns
     -------
     radii_ratio_rad : float
         Ratio of radii of smaller-sized star to greater-sized star calculated from star radii.
-        radii_ratio = radius_s / radius_g  where radius_s,radius_g are radii of smaller-,greater-sized stars.
+        radii_ratio = radius_s / radius_g
     
     Notes
     -----
@@ -268,7 +270,7 @@ def calc_incl_from_radii_ratios_phase_incl(radii_ratio_lt, phase_orb_ext, phase_
     radii_ratio_lt : float
         Ratio of radii of smaller-sized star to greater-sized star
         calculated from light levels during occultation and transit.
-        radii_ratio = radius_s / radius_g  where radius_s,radius_g are radii of smaller-,greater-sized stars.
+        radii_ratio = radius_s / radius_g
     phase_orb_ext : float
         Orbital phase angle at external tangencies (e.g. begin ingress, end egress). Unit is radians.
     phase_orb_int : float
