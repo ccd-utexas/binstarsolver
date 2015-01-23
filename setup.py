@@ -28,8 +28,8 @@ setup(
         # Project maturity values: 3 - Alpha; 4 - Beta; 5 - Production/Stable
         # https://pypi.python.org/pypi?%3Aaction=list_classifiers
         'Development Status :: 3 - Alpha',
-        'Intended Audience :: Scientists',
-        'Topic :: Astronomy',
+        'Intended Audience :: Science/Research',
+        'Topic :: Scientific/Engineering :: Astronomy',
         'License :: OSI Approved :: MIT License',
         # Supported Python versions.
         'Programming Language :: Python :: 2',
