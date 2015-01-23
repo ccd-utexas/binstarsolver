@@ -17,7 +17,7 @@ setup(
     name='binstarsolver',
     # Versions should comply with PEP440.
     # https://packaging.python.org/en/latest/single_source_version.html
-    version='0.1.1',
+    version='0.1.2',
     description='Estimate physical quantities of a binary star system from observed quantities.',
     long_description=long_description,
     url='https://github.com/ccd-utexas/binstarsolver',
