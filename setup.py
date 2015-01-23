@@ -3,7 +3,7 @@
 
 """
 
-from __future__ import absolute_import, print_function, division
+from __future__ import absolute_import, division, print_function
 from os import path
 from codecs import open
 from setuptools import setup, find_packages
@@ -17,7 +17,7 @@ setup(
     name='binstarsolver',
     # Versions should comply with PEP440.
     # https://packaging.python.org/en/latest/single_source_version.html
-    version='0.1.0',
+    version='0.1.1',
     description='Estimate physical quantities of a binary star system from observed quantities.',
     long_description=long_description,
     url='https://github.com/ccd-utexas/binstarsolver',
