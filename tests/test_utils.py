@@ -310,3 +310,20 @@ def test_calc_teff_ratio_from_flux_rad_ratio(flux_rad_ratio=3.94386308928358,
     assert np.isclose(bss.utils.calc_teff_ratio_from_flux_rad_ratio(flux_rad_ratio=flux_rad_ratio),
                       teff_ratio)
     return None
+
+
+def test_calc_lum_ratio_from_radii_teff_ratios(radii_ratio=1.06/2.2,
+                                               teff_ratio=5940.0/9800.0,
+                                               lum_ratio=0.03133342331313779):
+    """Test that calculations are correct using quanties for two main-sequence stars,
+    type A0 and G0, from Appendix G of [1]_
+
+    References
+    ----------
+    .. [1] Carroll and Ostlie, 2007, An Introduction to Modern Astrophysics
+
+    """
+    assert np.isclose(bss.utils.calc_lum_ratio_from_radii_teff_ratios(radii_ratio=radii_ratio,
+                                                                      teff_ratio=teff_ratio),
+                      lum_ratio)
+    return None

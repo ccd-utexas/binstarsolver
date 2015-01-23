@@ -375,7 +375,7 @@ def calc_semimaj_axis_from_period_velr_incl(period, velr, incl):
     Notes
     -----
     v = 2*pi*a / P, where v is orbital velocity, a is semi-major axis, P is orbital period.
-    v = vr / sin(i), where vr is observed radial orbital velocity, i is orbital inclination.
+      = vr / sin(i), where vr is observed radial orbital velocity, i is orbital inclination.
     => a = (P / (2*pi)) * (vr / sin(i))
     From section 7.3 of [1]_.
     
@@ -508,7 +508,7 @@ def calc_mass_ratio_from_velrs(velr_1, velr_2):
     -----
     m1 / m2 = a2 / a1, where a is semi-major axis of low-eccentricty orbit.
     v = 2*pi*a / P, where v is orbital velocity, P is orbital period.
-    v = vr / sin(i), where vr is observed radial orbital velocity, i is orbital inclination.
+      = vr / sin(i), where vr is observed radial orbital velocity, i is orbital inclination.
     => m1 / m2 = v2r / v1r
     From equation 7.5 in section 7.3 of [1]_.
     
@@ -620,7 +620,7 @@ def calc_flux_rad_ratio_from_light(light_oc, light_tr, light_ref=1.0):
     Notes
     -----
     flux_rad_ratio = flux_rad_s / flux_rad_g
-    flux_rad_ratio = (light_ref - light_oc) / (light_ref - light_tr)
+                   = (light_ref - light_oc) / (light_ref - light_tr)
     From equation 7.10 in section 7.3 of [1]_
     
     References
@@ -645,13 +645,13 @@ def calc_teff_ratio_from_flux_rad_ratio(flux_rad_ratio):
     Returns
     -------
     teff_ratio : float
-        Ratio of effective temperatures of smaller star to greater star.
+        Ratio of effective temperatures of smaller-sized star to greater-sized star.
         teff_ratio = teff_s / teff_g
 
     Notes
     -----
     teff_ratio = teff_s / teff_g
-    teff_ratio = flux_rad_ratio**0.25 = (flux_rad_s / flux_rad_g)**0.25
+               = flux_rad_ratio**0.25 = (flux_rad_s / flux_rad_g)**0.25
     From equation 7.10, 7.11 in section 7.3 of [1]_
     
     References
@@ -661,3 +661,40 @@ def calc_teff_ratio_from_flux_rad_ratio(flux_rad_ratio):
     """
     teff_ratio = flux_rad_ratio**0.25
     return teff_ratio
+
+
+def calc_lum_ratio_from_radii_teff_ratios(radii_ratio, teff_ratio):
+    """Calculate ratio of the luminosities of the smaller star to greater star
+    from the ratios of their radii and effective temperature.
+    
+    Parameters
+    ----------
+    radii_ratio : float
+        Ratio of radii of smaller-sized star to greater-sized star.
+        radii_ratio = radius_s / radius_g
+    teff_ratio : float
+        Ratio of effective temperatures of smaller-sized star to greater-sized star.
+        teff_ratio = teff_s / teff_g
+        
+    Returns
+    -------
+    lum_ratio : float
+        Ratio of luminosities of smaller-sized star to greater-sized star.
+        lum_ratio = lum_s / lum_g
+
+    Notes
+    -----
+    lum_ratio = lum_s / lum_g
+              = (4 * pi * radius_s**2 * sigma * teff_s**4) / (4 * pi * radius_g**2 * sigma * teff_g**4)
+    radii_ratio = radius_s / radius_g
+    teff_ratio = teff_s / teff_g
+    => lum_ratio = radii_ratio**2 * teff_ratio**4
+    From equation 3.17 in section 3.4 of [1]_
+    
+    References
+    ----------
+    .. [1] Carroll and Ostlie, 2007, An Introduction to Modern Astrophysics
+    
+    """
+    lum_ratio = radii_ratio**2.0 * teff_ratio**4.0
+    return lum_ratio
