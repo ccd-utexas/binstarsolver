@@ -6,7 +6,7 @@ Tests are executed using pytest.
 
 """
 
-from __future__ import absolute_import, division, print_function, 
+from __future__ import absolute_import, division, print_function
 import binstarsolver as bss
 
 
