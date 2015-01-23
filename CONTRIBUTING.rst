@@ -1,7 +1,7 @@
 CONTRIBUTING
 ============
 
-Thanks for your interest in contributing! Please use the following when contributing:
+Thanks for your interest in contributing! Please use the following:
 
 * GitHub guidelines: https://guides.github.com/
 * Git branching model: http://nvie.com/posts/a-successful-git-branching-model/

@@ -139,7 +139,7 @@ def test_calc_incl_from_radii_ratios_phase_incl(radii_ratio_lt=0.539115831461792
                                                 phase_orb_ext=0.21467549799530256,
                                                 phase_orb_int=0.061086523819801536,
                                                 incl_init=np.deg2rad(85.0),
-                                                show_plot=False,
+                                                show_plots=False,
                                                 incl=1.5514042883817927):
     """Test that calculations are correct using example from section 7.3, page 261 of [1]_
 
@@ -152,7 +152,7 @@ def test_calc_incl_from_radii_ratios_phase_incl(radii_ratio_lt=0.539115831461792
                                                                        phase_orb_ext=phase_orb_ext,
                                                                        phase_orb_int=phase_orb_int,
                                                                        incl_init=incl_init,
-                                                                       show_plot=show_plot),
+                                                                       show_plots=show_plots),
                       incl)
     return None
 

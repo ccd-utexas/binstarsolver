@@ -261,7 +261,7 @@ def calc_radii_ratio_from_rads(radius_sep_s, radius_sep_g):
 
 
 def calc_incl_from_radii_ratios_phase_incl(radii_ratio_lt, phase_orb_ext, phase_orb_int,
-                                           incl_init=np.deg2rad(85.0), show_plot=False):
+                                           incl_init=np.deg2rad(85.0), show_plots=False):
     """Calculate inclination angle by minimizing difference of ratios of stellar radii as calulated
     from light levels and lightcurve events (tangencies) for various values of inclination.
     
@@ -278,7 +278,7 @@ def calc_incl_from_radii_ratios_phase_incl(radii_ratio_lt, phase_orb_ext, phase_
     incl_init : {numpy.deg2rad(85.0)}, float, optional
         Initial guess for inclination angle in radians for minimization procedure of differences in radii ratios.
         Radii ratio difference has a local maximum for `incl` = numpy.deg2rad(90).
-    show_plot : {True}, bool, optional
+    show_plots : {True}, bool, optional
         Create and show diagnostic plots of difference in independent radii_ratio values vs inclination angle.
         Use to check solution in case initial guess for inclination angle caused convergence to wrong solution
         for inclination angle.
@@ -310,18 +310,12 @@ def calc_incl_from_radii_ratios_phase_incl(radii_ratio_lt, phase_orb_ext, phase_
     radii_sep = lambda incl: calc_radii_sep_from_seps(sep_proj_ext=sep_proj_ext(incl=incl),
                                                       sep_proj_int=sep_proj_int(incl=incl))
     radii_ratio_rad = lambda incl: calc_radii_ratio_from_rads(*radii_sep(incl=incl))
-    if radii_ratio_rad < 0.1:
-        print(("WARNING: Ratio smaller star's radius to greater star's radius is < 0.1.\n" +
-               "    as calculated from eclipse timing events. The radii ratio as calculated\n" +
-               "    from light levels may not be valid (e.g. for a binary system with a\n" +
-               "    main sequence star and red giant."),
-              file=sys.stderr)
     # Minimize difference between independent radii_ratio values.
     diff_radii_ratios = lambda incl: abs(radii_ratio_lt - radii_ratio_rad(incl=incl))
     result = sci_opt.minimize(fun=diff_radii_ratios, x0=incl_init)
     incl = result['x'][0]
     # Create and show diagnostic plot.
-    if show_plot:
+    if show_plots:
         incls_out = np.deg2rad(np.linspace(0, 90, num=1000))
         diff_radii_ratios_out = map(diff_radii_ratios, incls_out)
         plt.plot(np.rad2deg(incls_out), diff_radii_ratios_out)
@@ -338,7 +332,18 @@ def calc_incl_from_radii_ratios_phase_incl(radii_ratio_lt, phase_orb_ext, phase_
         plt.ylabel("abs(radii_ratio_lt - radii_ratio_rad(incl))")
         plt.xlabel("inclination angle (degrees)")
         plt.show()
-    # Test that radii_ratio values can be matched.
+    # Check solutions.
+    if radii_ratio_rad(incl=incl) < 0.1:
+        print(("WARNING: From eclipse timing events, ratio of smaller star's radius\n" +
+               "    to greater star's radius is < 0.1. The radii ratio as calculated\n" +
+               "    from light levels may not be valid (e.g. for a binary system with\n" +
+               "    a main sequence star and a red giant).\n" +
+               "    VALID:\n" +
+               "    radii_ratio_rad = radius_s / radius_g from eclipse timings = {rtime}\n" +
+               "    MAYBE INVALID:\n" +
+               "    radii_ratio_lt  = radius_s / radius_g from light levels = {rlt}").format(rtime=radii_ratio_rad(incl=incl),
+                                                                                             rlt=radii_ratio_lt),
+              file=sys.stderr)
     if diff_radii_ratios(incl) < 1e-3:
         print("INFO: Inclination yields self-consistent solution for model.")
     else:
