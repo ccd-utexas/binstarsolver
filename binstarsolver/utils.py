@@ -53,16 +53,16 @@ def calc_fluxes_intg_rel_from_light(light_oc, light_ref=1.0):
         
     Returns
     -------
-    flux_intg_rel_g : float
-        Integrated flux of greater-sized star as a fraction of total integrated flux.
     flux_intg_rel_s : float
+        Integrated flux of greater-sized star as a fraction of total integrated flux.
+    flux_intg_rel_g : float
         Integrated flux of greater-sized star as a fraction of total integrated flux.
     
     Notes
     -----
-    Note: Fluxes are returned as a tuple: (fg, fs)
-    flux_intg_rel_g = light_oc / light_ref
+    Note: Fluxes are returned as a tuple: (fs, fg)
     flux_intg_rel_s = (light_ref - light_oc) / light_ref
+    flux_intg_rel_g = light_oc / light_ref
     From equation 7.2 in section 7.3 of [1]_.
     
     References
@@ -70,9 +70,9 @@ def calc_fluxes_intg_rel_from_light(light_oc, light_ref=1.0):
     .. [1] Budding, 2007, Introduction to Astronomical Photometry
     
     """
-    flux_intg_rel_g = light_oc / light_ref
     flux_intg_rel_s = (light_ref - light_oc) / light_ref
-    return (flux_intg_rel_g, flux_intg_rel_s)
+    flux_intg_rel_g = light_oc / light_ref
+    return (flux_intg_rel_s, flux_intg_rel_g)
 
 
 def calc_phase_orb_from_time_period(time_event, period, time_mideclipse=0.0):
@@ -144,6 +144,8 @@ def calc_radii_ratio_from_light(light_oc, light_tr, light_ref=1.0):
     """Calculate ratio of radii of smaller-sized star to greater-sized star from light levels 
     during occultation and transit. Assumes L \propto r^2, no limb darkening.
     
+    Method may not be valid for radii ratios > 10. See "Notes".
+    
     Parameters
     ----------
     light_oc : float
@@ -162,14 +164,14 @@ def calc_radii_ratio_from_light(light_oc, light_tr, light_ref=1.0):
     radii_ratio_lt : float
         Ratio of radii of smaller-sized star to greater-sized star calculated from light levels
         during occultation and transit.
-        radii_ratio = radius_s / radius_g  where radius_s,radius_g are radii of smaller-,greater-sized stars.
+        radii_ratio = radius_s / radius_g
 
     Notes
     -----
     Note: Method may not be valid for stars in different stages of evolution or for radii ratios > 10
     (e.g. a binary system with main sequence star and a red giant)
     radii_ratio = radius_s / radius_g
-    radii_ratio = sqrt((light_ref - light_tr) / light_oc)
+                = sqrt((light_ref - light_tr) / light_oc)
     From equation 7.8 in section 7.3 of [1]_.
 
     References
@@ -196,10 +198,10 @@ def calc_radii_sep_from_seps(sep_proj_ext, sep_proj_int):
     
     Returns
     -------
-    radius_sep_g : float
-        Radius of greater-sized star. Unit is star-star separation distance.
     radius_sep_s : float
         Radius of smaller-sized star. Unit is star-star separation distance.
+    radius_sep_g : float
+        Radius of greater-sized star. Unit is star-star separation distance.
     
     See Also
     --------
@@ -207,15 +209,15 @@ def calc_radii_sep_from_seps(sep_proj_ext, sep_proj_int):
     
     Notes
     -----
+    Note: Radii are returned as a tuple: (rs, rg)
     Note: Method does not assume an inclination.
-    Note: Radii are returned as a tuple: (rg, rs)
     radii_ratio = radius_sep_s / radius_sep_g
     sep_proj_ext = radius_sep_g * (1 + radii_ratio)
     sep_proj_int = radius_sep_g * (1 - radii_ratio)
-    => sep_proj_ext + sep_proj_int = 2 * radius_sep_g
-       radius_sep_g = (sep_proj_ext + sep_proj_int) / 2
     => sep_proj_ext - sep_proj_int = 2 * radius_sep_g * radii_ratio = 2 * radius_sep_s
        radius_sep_s = (sep_proj_ext - sep_proj_int) / 2
+    => sep_proj_ext + sep_proj_int = 2 * radius_sep_g
+       radius_sep_g = (sep_proj_ext + sep_proj_int) / 2
     From equations 7.8, 7.9, 7.10 in section 7.3 of [1]_.
     
     References
@@ -223,25 +225,26 @@ def calc_radii_sep_from_seps(sep_proj_ext, sep_proj_int):
     .. [1] Budding, 2007, Introduction to Astronomical Photometry
     
     """
-    radius_sep_g = (sep_proj_ext + sep_proj_int) / 2.0
     radius_sep_s = (sep_proj_ext - sep_proj_int) / 2.0    
-    return (radius_sep_g, radius_sep_s) 
+    radius_sep_g = (sep_proj_ext + sep_proj_int) / 2.0
+    return (radius_sep_s, radius_sep_g) 
 
 
-def calc_radii_ratio_from_rads(radius_sep_g, radius_sep_s):
+def calc_radii_ratio_from_rads(radius_sep_s, radius_sep_g):
     """Calculate ratio of radii of smaller-sized star to greater-sized star.
     
     Parameters
     ----------
-    radius_sep_g : float
-        Radius of greater-sized star. Unit is star-star separation distance.
     radius_sep_s : float
         Radius of smaller-sized star. Unit is star-star separation distance.
+    radius_sep_g : float
+        Radius of greater-sized star. Unit is star-star separation distance.
     
     Returns
     -------
     radii_ratio_rad : float
         Ratio of radii of smaller-sized star to greater-sized star calculated from star radii.
+        radii_ratio = radius_s / radius_g
     
     Notes
     -----
@@ -258,7 +261,7 @@ def calc_radii_ratio_from_rads(radius_sep_g, radius_sep_s):
 
 
 def calc_incl_from_radii_ratios_phase_incl(radii_ratio_lt, phase_orb_ext, phase_orb_int,
-                                           incl_init=np.deg2rad(85.0), show_plot=False):
+                                           incl_init=np.deg2rad(85.0), show_plots=False):
     """Calculate inclination angle by minimizing difference of ratios of stellar radii as calulated
     from light levels and lightcurve events (tangencies) for various values of inclination.
     
@@ -267,7 +270,7 @@ def calc_incl_from_radii_ratios_phase_incl(radii_ratio_lt, phase_orb_ext, phase_
     radii_ratio_lt : float
         Ratio of radii of smaller-sized star to greater-sized star
         calculated from light levels during occultation and transit.
-        radii_ratio = radius_s / radius_g  where radius_s,radius_g are radii of smaller-,greater-sized stars.
+        radii_ratio = radius_s / radius_g
     phase_orb_ext : float
         Orbital phase angle at external tangencies (e.g. begin ingress, end egress). Unit is radians.
     phase_orb_int : float
@@ -275,7 +278,7 @@ def calc_incl_from_radii_ratios_phase_incl(radii_ratio_lt, phase_orb_ext, phase_
     incl_init : {numpy.deg2rad(85.0)}, float, optional
         Initial guess for inclination angle in radians for minimization procedure of differences in radii ratios.
         Radii ratio difference has a local maximum for `incl` = numpy.deg2rad(90).
-    show_plot : {True}, bool, optional
+    show_plots : {True}, bool, optional
         Create and show diagnostic plots of difference in independent radii_ratio values vs inclination angle.
         Use to check solution in case initial guess for inclination angle caused convergence to wrong solution
         for inclination angle.
@@ -312,7 +315,7 @@ def calc_incl_from_radii_ratios_phase_incl(radii_ratio_lt, phase_orb_ext, phase_
     result = sci_opt.minimize(fun=diff_radii_ratios, x0=incl_init)
     incl = result['x'][0]
     # Create and show diagnostic plot.
-    if show_plot:
+    if show_plots:
         incls_out = np.deg2rad(np.linspace(0, 90, num=1000))
         diff_radii_ratios_out = map(diff_radii_ratios, incls_out)
         plt.plot(np.rad2deg(incls_out), diff_radii_ratios_out)
@@ -329,7 +332,18 @@ def calc_incl_from_radii_ratios_phase_incl(radii_ratio_lt, phase_orb_ext, phase_
         plt.ylabel("abs(radii_ratio_lt - radii_ratio_rad(incl))")
         plt.xlabel("inclination angle (degrees)")
         plt.show()
-    # Test that radii_ratio values can be matched.
+    # Check solutions.
+    if radii_ratio_rad(incl=incl) < 0.1:
+        print(("WARNING: From eclipse timing events, ratio of smaller star's radius\n" +
+               "    to greater star's radius is < 0.1. The radii ratio as calculated\n" +
+               "    from light levels may not be valid (e.g. for a binary system with\n" +
+               "    a main sequence star and a red giant).\n" +
+               "    VALID:\n" +
+               "    radii_ratio_rad = radius_s / radius_g from eclipse timings = {rtime}\n" +
+               "    MAYBE INVALID:\n" +
+               "    radii_ratio_lt  = radius_s / radius_g from light levels = {rlt}").format(rtime=radii_ratio_rad(incl=incl),
+                                                                                             rlt=radii_ratio_lt),
+              file=sys.stderr)
     if diff_radii_ratios(incl) < 1e-3:
         print("INFO: Inclination yields self-consistent solution for model.")
     else:
@@ -368,7 +382,7 @@ def calc_semimaj_axis_from_period_velr_incl(period, velr, incl):
     Notes
     -----
     v = 2*pi*a / P, where v is orbital velocity, a is semi-major axis, P is orbital period.
-    v = vr / sin(i), where vr is observed radial orbital velocity, i is orbital inclination.
+      = vr / sin(i), where vr is observed radial orbital velocity, i is orbital inclination.
     => a = (P / (2*pi)) * (vr / sin(i))
     From section 7.3 of [1]_.
     
@@ -501,7 +515,7 @@ def calc_mass_ratio_from_velrs(velr_1, velr_2):
     -----
     m1 / m2 = a2 / a1, where a is semi-major axis of low-eccentricty orbit.
     v = 2*pi*a / P, where v is orbital velocity, P is orbital period.
-    v = vr / sin(i), where vr is observed radial orbital velocity, i is orbital inclination.
+      = vr / sin(i), where vr is observed radial orbital velocity, i is orbital inclination.
     => m1 / m2 = v2r / v1r
     From equation 7.5 in section 7.3 of [1]_.
     
@@ -613,7 +627,7 @@ def calc_flux_rad_ratio_from_light(light_oc, light_tr, light_ref=1.0):
     Notes
     -----
     flux_rad_ratio = flux_rad_s / flux_rad_g
-    flux_rad_ratio = (light_ref - light_oc) / (light_ref - light_tr)
+                   = (light_ref - light_oc) / (light_ref - light_tr)
     From equation 7.10 in section 7.3 of [1]_
     
     References
@@ -638,13 +652,13 @@ def calc_teff_ratio_from_flux_rad_ratio(flux_rad_ratio):
     Returns
     -------
     teff_ratio : float
-        Ratio of effective temperatures of smaller star to greater star.
+        Ratio of effective temperatures of smaller-sized star to greater-sized star.
         teff_ratio = teff_s / teff_g
 
     Notes
     -----
     teff_ratio = teff_s / teff_g
-    teff_ratio = flux_rad_ratio**0.25 = (flux_rad_s / flux_rad_g)**0.25
+               = flux_rad_ratio**0.25 = (flux_rad_s / flux_rad_g)**0.25
     From equation 7.10, 7.11 in section 7.3 of [1]_
     
     References
@@ -654,3 +668,40 @@ def calc_teff_ratio_from_flux_rad_ratio(flux_rad_ratio):
     """
     teff_ratio = flux_rad_ratio**0.25
     return teff_ratio
+
+
+def calc_lum_ratio_from_radii_teff_ratios(radii_ratio, teff_ratio):
+    """Calculate ratio of the luminosities of the smaller star to greater star
+    from the ratios of their radii and effective temperature.
+    
+    Parameters
+    ----------
+    radii_ratio : float
+        Ratio of radii of smaller-sized star to greater-sized star.
+        radii_ratio = radius_s / radius_g
+    teff_ratio : float
+        Ratio of effective temperatures of smaller-sized star to greater-sized star.
+        teff_ratio = teff_s / teff_g
+        
+    Returns
+    -------
+    lum_ratio : float
+        Ratio of luminosities of smaller-sized star to greater-sized star.
+        lum_ratio = lum_s / lum_g
+
+    Notes
+    -----
+    lum_ratio = lum_s / lum_g
+              = (4 * pi * radius_s**2 * sigma * teff_s**4) / (4 * pi * radius_g**2 * sigma * teff_g**4)
+    radii_ratio = radius_s / radius_g
+    teff_ratio = teff_s / teff_g
+    => lum_ratio = radii_ratio**2 * teff_ratio**4
+    From equation 3.17 in section 3.4 of [1]_
+    
+    References
+    ----------
+    .. [1] Carroll and Ostlie, 2007, An Introduction to Modern Astrophysics
+    
+    """
+    lum_ratio = radii_ratio**2.0 * teff_ratio**4.0
+    return lum_ratio

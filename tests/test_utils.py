@@ -36,8 +36,8 @@ def test_calc_flux_intg_ratio_from_mags(mag_1=9.6, mag_2=6.3, flux_intg_ratio=0.
 
 def test_calc_fluxes_intg_rel_from_light(light_oc=0.898,
                                          light_ref=1.0,
-                                         flux_intg_rel_g=0.898,
-                                         flux_intg_rel_s=0.102):
+                                         flux_intg_rel_s=0.102,
+                                         flux_intg_rel_g=0.898):
     """Test that calculations are correct using example from section 7.3, page 261 of [1]_
 
     References
@@ -47,7 +47,7 @@ def test_calc_fluxes_intg_rel_from_light(light_oc=0.898,
     """
     assert np.isclose(bss.utils.calc_fluxes_intg_rel_from_light(light_oc=light_oc,
                                                                 light_ref=light_ref),
-                      (flux_intg_rel_g, flux_intg_rel_s)).all()
+                      (flux_intg_rel_s, flux_intg_rel_g)).all()
     return None
 
 
@@ -104,8 +104,8 @@ def test_calc_radii_ratio_from_light(light_oc=0.898,
 
 def test_calc_radii_sep_from_seps(sep_proj_ext=0.213871189506,
                                   sep_proj_int=0.0640431640294,
-                                  radius_sep_g=0.138957176768,
-                                  radius_sep_s=0.0749140127382):
+                                  radius_sep_s=0.0749140127382,
+                                  radius_sep_g=0.138957176768):
     """Test that calculations are correct using example from section 7.3, page 261 of [1]_
 
     References
@@ -115,12 +115,12 @@ def test_calc_radii_sep_from_seps(sep_proj_ext=0.213871189506,
     """
     assert np.isclose(bss.utils.calc_radii_sep_from_seps(sep_proj_ext=sep_proj_ext,
                                                          sep_proj_int=sep_proj_int),
-                      (radius_sep_g, radius_sep_s)).all()
+                      (radius_sep_s, radius_sep_g)).all()
     return None
 
 
-def test_calc_radii_ratio_from_rads(radius_sep_g=0.138957176768,
-                                    radius_sep_s=0.0749140127382,
+def test_calc_radii_ratio_from_rads(radius_sep_s=0.0749140127382,
+                                    radius_sep_g=0.138957176768,
                                     radii_ratio=0.53911582316839601):
     """Test that calculations are correct using example from section 7.3, page 261 of [1]_
 
@@ -129,8 +129,8 @@ def test_calc_radii_ratio_from_rads(radius_sep_g=0.138957176768,
     .. [1] Budding, 2007, Introduction to Astronomical Photometry
 
     """
-    assert np.isclose(bss.utils.calc_radii_ratio_from_rads(radius_sep_g=radius_sep_g,
-                                                           radius_sep_s=radius_sep_s),
+    assert np.isclose(bss.utils.calc_radii_ratio_from_rads(radius_sep_s=radius_sep_s,
+                                                           radius_sep_g=radius_sep_g),
                       radii_ratio)
     return None
 
@@ -139,7 +139,7 @@ def test_calc_incl_from_radii_ratios_phase_incl(radii_ratio_lt=0.539115831461792
                                                 phase_orb_ext=0.21467549799530256,
                                                 phase_orb_int=0.061086523819801536,
                                                 incl_init=np.deg2rad(85.0),
-                                                show_plot=False,
+                                                show_plots=False,
                                                 incl=1.5514042883817927):
     """Test that calculations are correct using example from section 7.3, page 261 of [1]_
 
@@ -152,7 +152,7 @@ def test_calc_incl_from_radii_ratios_phase_incl(radii_ratio_lt=0.539115831461792
                                                                        phase_orb_ext=phase_orb_ext,
                                                                        phase_orb_int=phase_orb_int,
                                                                        incl_init=incl_init,
-                                                                       show_plot=show_plot),
+                                                                       show_plots=show_plots),
                       incl)
     return None
 
@@ -309,4 +309,21 @@ def test_calc_teff_ratio_from_flux_rad_ratio(flux_rad_ratio=3.94386308928358,
     """
     assert np.isclose(bss.utils.calc_teff_ratio_from_flux_rad_ratio(flux_rad_ratio=flux_rad_ratio),
                       teff_ratio)
+    return None
+
+
+def test_calc_lum_ratio_from_radii_teff_ratios(radii_ratio=1.06/2.2,
+                                               teff_ratio=5940.0/9800.0,
+                                               lum_ratio=0.03133342331313779):
+    """Test that calculations are correct using quanties for two main-sequence stars,
+    type A0 and G0, from Appendix G of [1]_
+
+    References
+    ----------
+    .. [1] Carroll and Ostlie, 2007, An Introduction to Modern Astrophysics
+
+    """
+    assert np.isclose(bss.utils.calc_lum_ratio_from_radii_teff_ratios(radii_ratio=radii_ratio,
+                                                                      teff_ratio=teff_ratio),
+                      lum_ratio)
     return None
