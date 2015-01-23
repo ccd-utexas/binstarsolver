@@ -6,9 +6,8 @@ Tests are executed using pytest.
 
 """
 
-
-from __future__ import absolute_import, print_function, division
+from __future__ import absolute_import, division, print_function, 
 import binstarsolver as bss
 
 
-# TODO: test calling as console script.
+# TODO: for testing top-level scripts in binstarsolver/main.py

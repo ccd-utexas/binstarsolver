@@ -2,14 +2,14 @@
 
 """
 
-
-from __future__ import absolute_import, print_function, division
+from __future__ import absolute_import, division, print_function
 from . import utils
 
+
 def main():
-    print("main called")
+    # TODO: for top-level scripts.
     return None
 
+
 if __name__ == '__main__':
-    # TODO: call json file from command line.
     main()
