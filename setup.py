@@ -44,7 +44,6 @@ setup(
     install_requires=[
         'numpy>=1.8.2',
         'scipy>=0.14.0',
-        'astropy>=0.4.2',
         'matplotlib>=1.4.0'],
     # Additional dependencies (e.g. development dependencies).
     # Install using: $ pip install -e .[dev,test]
