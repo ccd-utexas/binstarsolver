@@ -9,12 +9,12 @@ The estimated physical quantities serve as input to a more complete numerical mo
 The model used in this project is a simple, spherical detached binary star model with no orbital eccentricity and no limb darkening.
 The model is from chapter 7 of [2]_ and chapter 7 of [3]_.
 
-Input observable quantities
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Input observed quantities
+^^^^^^^^^^^^^^^^^^^^^^^^^
 
 * Relative times of begin/end ingress/egress and mid-eclipse.
 * Orbital period.
-* Light levels during occultation (primary eclipse), transit (secondary eclipse), outside of eclipse.
+* Light levels during occultation (primary eclipse), transit (secondary eclipse), and outside of eclipse.
 * Stellar radial velocities.
 
 Output estimated physical quantities
