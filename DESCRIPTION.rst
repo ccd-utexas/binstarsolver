@@ -29,7 +29,7 @@ Output estimated physical quantities
 * Ratio of stellar luminosites.
 
 References
-----------
+^^^^^^^^^^
 
 .. [1] `Kallrath and Milone, 2007, Eclipsing Binary Stars: Modeling and Analysis <https://books.google.com/books?id=CrXBnZFdjXgC>`_
 .. [2] `Budding, 2007, Introduction to Astronomical Photometry <https://books.google.com/books?id=g_K3-bQ8lTUC>`_
