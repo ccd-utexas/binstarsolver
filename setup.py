@@ -20,7 +20,7 @@ setup(
     version='0.1.2',
     description='Estimate physical quantities of a binary star system from observed quantities.',
     long_description=long_description,
-    url='https://github.com/ccd-utexas/binstarsolver',
+    url='http://binstarsolver.readthedocs.org',
     author='White Dwarf Research Group, Astronomy Dept, UT Austin',
     author_email='harrold@astro.as.utexas.edu',
     license='MIT',
