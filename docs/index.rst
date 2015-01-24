@@ -1,5 +1,5 @@
 .. binstarsolver documentation master file, created by
-   sphinx-quickstart on Fri Jan 23 19:32:16 2015.
+   sphinx-quickstart on Sat Jan 24 14:26:05 2015.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 

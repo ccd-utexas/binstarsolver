@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # binstarsolver documentation build configuration file, created by
-# sphinx-quickstart on Fri Jan 23 19:32:16 2015.
+# sphinx-quickstart on Sat Jan 24 14:26:05 2015.
 #
 # This file is execfile()d with the current directory set to its
 # containing dir.
@@ -77,7 +77,7 @@ release = '0.1.2'
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
-exclude_patterns = []
+exclude_patterns = ['_build']
 
 # The reST default role (used for this markup: `text`) to use for all
 # documents.
