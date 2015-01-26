@@ -1,19 +1,25 @@
 #!/usr/bin/env python
-"""Adapted from https://github.com/pypa/sampleproject
+"""Adapted from [1]_, [2]_.
+
+References
+----------
+.. [1] https://github.com/pypa/sampleproject
+.. [2] https://bitbucket.org/birkenfeld/sphinx-contrib/src/dae39f177383/napoleon/?at=default
 
 """
 
 from __future__ import absolute_import, division, print_function
-from os import path
-from codecs import open
-from setuptools import setup, find_packages
+import os
+import codecs
+import setuptools
 
-# Fetch long_description from DESCRIPTION.rst.
-here = path.abspath(path.dirname(__file__))
-with open(path.join(here, 'DESCRIPTION.rst'), encoding='utf-8') as f:
-    long_description = f.read()
+# Load descriptions.
+# Note: As of 2015-01-25, check-manifest will not load docs/requirements_readthedocs.txt.
+# To build docs on local machine, install dependencies manually.
+fpath = os.path.abspath(os.path.dirname(__file__))
+long_description = codecs.open(os.path.join(fpath, 'DESCRIPTION.rst'), encoding='utf-8').read()
 
-setup(
+setuptools.setup(
     name='binstarsolver',
     # Versions should comply with PEP440.
     # https://packaging.python.org/en/latest/single_source_version.html
@@ -38,18 +44,15 @@ setup(
         'Programming Language :: Python :: 3.4',
     ],
     keywords='astronomy binary stars observing',
-    packages=find_packages(exclude=['contrib', 'docs', 'tests*']),
+    packages=setuptools.find_packages(exclude=['contrib', 'docs', 'tests*']),
     # Run-time dependencies. Will be installed by pip.
     # https://packaging.python.org/en/latest/requirements.html
-    install_requires=[
-        'numpy>=1.8.2',
-        'scipy>=0.14.0',
-        'matplotlib>=1.4.0'],
+    install_requires=['numpy>=1.8.2', 'scipy>=0.14.0', 'matplotlib>=1.4.0'],
     # Additional dependencies (e.g. development dependencies).
     # Install using: $ pip install -e .[dev,test]
     extras_require = {
-        'dev': ['check-manifest'],
-        'test': ['coverage', 'pytest'],
+        'dev': ['check-manifest>=0.22'],
+        'test': ['coverage>=3.7.1', 'pytest>=2.6.3']
     },
     # Data files included in installed packages.
     package_data={},
@@ -61,7 +64,7 @@ setup(
     # for cross-platform portability.
     entry_points={
         'console_scripts': [
-            'binstarsolver=binstarsolver.main:main',
+            'binstarsolver=binstarsolver.main:main'
         ],
     },
 )

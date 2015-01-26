@@ -37,7 +37,8 @@ Use `pytest <https://pytest.org>`_:
    $ cd binstarsolver
    $ git tag --list
    $ git checkout tags/v0.1.2 # or latest tag name
-   $ py.test
+   $ pip install -e .[test] # installs packages for testing
+   $ py.test -v
 
 Contributing
 ------------
