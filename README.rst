@@ -17,13 +17,6 @@ Examples
 
 See repository `wiki <https://github.com/ccd-utexas/binstarsolver/wiki>`_.
 
-API Documentation
------------------
-
-.. toctree::
-
-   docs/index
-
 Installation
 ------------
 
