@@ -4,6 +4,7 @@
 
 from __future__ import absolute_import, division, print_function
 import sys
+import warnings
 import numpy as np
 import scipy.optimize as sci_opt
 import scipy.constants as sci_con
@@ -333,7 +334,7 @@ def calc_incl_from_radii_ratios_phase_incl(radii_ratio_lt, phase_orb_ext, phase_
         plt.show()
     # Check solutions.
     if radii_ratio_rad(incl=incl) < 0.1:
-        print(("WARNING: From eclipse timing events, ratio of smaller star's radius\n" +
+        warnings.warn(("From eclipse timing events, ratio of smaller star's radius\n" +
                "    to greater star's radius is < 0.1. The radii ratio as calculated\n" +
                "    from light levels may not be valid (e.g. for a binary system with\n" +
                "    a main sequence star and a red giant).\n" +
@@ -341,13 +342,12 @@ def calc_incl_from_radii_ratios_phase_incl(radii_ratio_lt, phase_orb_ext, phase_
                "    radii_ratio_rad = radius_s / radius_g from eclipse timings = {rtime}\n" +
                "    MAYBE INVALID:\n" +
                "    radii_ratio_lt  = radius_s / radius_g from light levels = {rlt}").format(rtime=radii_ratio_rad(incl=incl),
-                                                                                             rlt=radii_ratio_lt),
-              file=sys.stderr)
-    if diff_radii_ratios(incl) < 1e-3:
-        print("INFO: Inclination yields self-consistent solution for model.")
+                                                                                             rlt=radii_ratio_lt))
+    if diff_radii_ratios(incl) < 1e-3: pass
+        #print("INFO: Inclination yields self-consistent solution for model.")
     else:
         # Note: Warning message is delayed if called within a loop in an IPython Notebook.
-        print(("WARNING: Inclination does not yield self-consistent solution for model.\n" +
+        warnings.warn(("Inclination does not yield self-consistent solution for model.\n" +
                "    Input parameters cannot be fit by model:\n" +
                "    radii_ratio_lt   = {rrl}\n" +
                "    phase_orb_ext    = {poe}\n" +
@@ -355,8 +355,7 @@ def calc_incl_from_radii_ratios_phase_incl(radii_ratio_lt, phase_orb_ext, phase_
                "    incl_init        = {ii}").format(rrl=radii_ratio_lt,
                                                      poe=phase_orb_ext,
                                                      poi=phase_orb_int,
-                                                     ii=incl_init),
-              file=sys.stderr)
+                                                     ii=incl_init))
     return incl
 
 
