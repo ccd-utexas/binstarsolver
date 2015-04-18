@@ -18,6 +18,7 @@ References
 
 # Import standard packages.
 from __future__ import absolute_import, division, print_function
+import sys
 sys.path.insert(0, '.') # Test the code in this repository.
 # Import installed packages.
 import numpy as np
