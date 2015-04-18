@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-"""Adapted from [1]_, [2]_.
+"""Setup script adapted from [1]_, [2]_.
 
 References
 ----------
@@ -27,8 +27,8 @@ setuptools.setup(
     description='Estimate physical quantities of a binary star system from observed quantities.',
     long_description=long_description,
     url='http://binstarsolver.readthedocs.org',
-    author='White Dwarf Research Group, Astronomy Dept, UT Austin',
-    author_email='harrold@astro.as.utexas.edu',
+    author='Samuel Harrold; White Dwarf Research Group, Astronomy Dept, UT Austin',
+    author_email='samuel.harrold@gmail.com',
     license='MIT',
     classifiers=[
         # Project maturity values: 3 - Alpha; 4 - Beta; 5 - Production/Stable
