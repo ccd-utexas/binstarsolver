@@ -6,6 +6,7 @@ from __future__ import absolute_import, division, print_function
 import sys
 import warnings
 import numpy as np
+import pdb
 import scipy.optimize as sci_opt
 import scipy.constants as sci_con
 import matplotlib.pyplot as plt
@@ -260,10 +261,10 @@ def calc_radii_ratio_from_rads(radius_sep_s, radius_sep_g):
     return radii_ratio_rad
 
 
-def calc_incl_from_radii_ratios_phase_incl(radii_ratio_lt, phase_orb_ext, phase_orb_int,
-                                           incl_init=np.deg2rad(85.0), show_plots=False):
+def calc_incl_from_radii_ratios_phase_incl(
+    radii_ratio_lt, phase_orb_ext, phase_orb_int, tol=1e-4, show_plots=False):
     """Calculate inclination angle by minimizing difference of ratios of stellar radii as calulated
-    from light levels and lightcurve events (tangencies) for various values of inclination.
+    from light levels and light curve events (tangencies) for various values of inclination.
     
     Parameters
     ----------
@@ -275,11 +276,12 @@ def calc_incl_from_radii_ratios_phase_incl(radii_ratio_lt, phase_orb_ext, phase_
         Orbital phase angle at external tangencies (e.g. begin ingress, end egress). Unit is radians.
     phase_orb_int : float
         Orbital phase angle at internal tangencies (e.g. end ingress, begin egress). Unit is radians.
-    incl_init : {numpy.deg2rad(85.0)}, float, optional
-        Initial guess for inclination angle in radians for minimization procedure of differences in radii ratios.
-        Radii ratio difference has a local maximum for `incl` = numpy.deg2rad(90).
+    tol : {1e-4}, float, optional
+        Maximum tolerance for difference in radii ratios at a self-consistent solution for inclination,
+        i.e. at solved inclination:
+        abs('radii ratio from light levels' - 'radii ratio from eclipse events') < tol.
     show_plots : {True}, bool, optional
-        Create and show diagnostic plots of difference in independent radii_ratio values vs inclination angle.
+        Create and show diagnostic plots of difference in independent radii ratio values vs inclination angle.
         Use to check solution in case initial guess for inclination angle caused convergence to wrong solution
         for inclination angle.
     
@@ -294,10 +296,10 @@ def calc_incl_from_radii_ratios_phase_incl(radii_ratio_lt, phase_orb_ext, phase_
     
     Notes
     -----
-    Note: Method uses calc_radii_ratio_from_light, which may not be valid for stars in different stages of evolution
-    or for radii ratios > 10 (e.g. a binary system with main sequence star and a red giant)
-    Compares two independent ways of calculating radii_ratio in order to infer inclination angle. 
-    Equations from section 7.3 of [1]_.
+    - Method uses calc_radii_ratio_from_light, which may not be valid for stars in different stages of evolution
+        or for radii ratios > 10 (e.g. a binary system with main sequence star and a red giant)
+    - Compares two independent ways of calculating radii_ratio in order to infer inclination angle. 
+    - Equations from section 7.3 of [1]_.
     
     References
     ----------
@@ -310,12 +312,17 @@ def calc_incl_from_radii_ratios_phase_incl(radii_ratio_lt, phase_orb_ext, phase_
     radii_sep = lambda incl: calc_radii_sep_from_seps(sep_proj_ext=sep_proj_ext(incl=incl),
                                                       sep_proj_int=sep_proj_int(incl=incl))
     radii_ratio_rad = lambda incl: calc_radii_ratio_from_rads(*radii_sep(incl=incl))
-    # Minimize difference between independent radii_ratio values.
-    diff_radii_ratios = lambda incl: abs(radii_ratio_lt - radii_ratio_rad(incl=incl))
-    result = sci_opt.minimize(fun=diff_radii_ratios, x0=incl_init)
+    diff_radii_ratios = lambda incl: radii_ratio_lt - radii_ratio_rad(incl=incl)
+    # Minimize difference between independent radii_ratio values to a tolerance
+    # Note: diff_radii_ratios is monotonically decreasing with a zero
+    # at the solution for self-consistent inclination:
+    # - For incl < incl_soln, diff_radii_ratios > 0.
+    # - For incl > incl_soln, diff_radii_ratios < 0.
+    pdb.set_trace()
+    result = sci_opt.minimize(fun=diff_radii_ratios, x0=incl_init, tol=1e-4)
     incl = result['x'][0]
-    if incl > np.degtorad(90.0):
-        incl = np.degtorad(180.0) - incl
+    if incl > np.deg2rad(90.0):
+        incl = np.deg2rad(180.0) - incl
     # Create and show diagnostic plot.
     if show_plots:
         incls_out = np.deg2rad(np.linspace(0, 90, num=1000))
@@ -348,7 +355,7 @@ def calc_incl_from_radii_ratios_phase_incl(radii_ratio_lt, phase_orb_ext, phase_
              "    radii_ratio_lt  = radius_s / radius_g from light levels = {rlt}").format(
                  rtime=radii_ratio_rad(incl=incl),
                  rlt=radii_ratio_lt))
-    if diff_radii_ratios(incl) > 1e-3:
+    if diff_radii_ratios(incl) > tol:
         # Note: Warning message is delayed if called within a loop in an IPython Notebook.
         warnings.warn(
             ("\n" +
