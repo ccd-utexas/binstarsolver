@@ -1,12 +1,12 @@
-"""Tests for binstarsolver/utils.py.
-
-Test that calculations are correct using:
-- example from section 7.3, page 261 of [1]_
-- examples 7.3.1, 7.3.2 of [2]_
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+"""Pytest style tests for binstarsolver/utils.py.
 
 Notes
 -----
-Tests are executed using pytest.
+Test that calculations are correct using:
+- example from section 7.3, page 261 of [1]_
+- examples 7.3.1, 7.3.2 of [2]_
 
 References
 ----------
@@ -15,8 +15,13 @@ References
 
 """
 
+
+# Import standard packages.
 from __future__ import absolute_import, division, print_function
+sys.path.insert(0, '.') # Test the code in this repository.
+# Import installed packages.
 import numpy as np
+# Import local packages.
 import binstarsolver as bss
 
 
