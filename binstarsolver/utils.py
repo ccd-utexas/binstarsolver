@@ -267,7 +267,7 @@ def calc_radii_ratio_from_rads(radius_sep_s, radius_sep_g):
 
 
 def calc_incl_from_radii_ratios_phase_incl(
-    radii_ratio_lt, phase_orb_ext, phase_orb_int, tol=1e-4, show_plots=False):
+    radii_ratio_lt, phase_orb_ext, phase_orb_int, tol=1e-4, maxiter=10, show_plots=False):
     """Calculate inclination angle by minimizing difference of ratios of stellar radii as calulated
     from light levels and light curve events (tangencies) for various values of inclination.
     
@@ -285,6 +285,8 @@ def calc_incl_from_radii_ratios_phase_incl(
         Maximum tolerance for difference in radii ratios at a self-consistent solution for inclination,
         i.e. at solved inclination:
         abs('radii ratio from light levels' - 'radii ratio from eclipse events') < tol.
+    maxiter : {10}, int, optional
+        Maximum number of iterations to perform when solving for inclination.
     show_plots : {True}, bool, optional
         Create and show diagnostic plots of difference in independent radii ratio values vs inclination angle.
         Use to check solution in case initial guess for inclination angle caused convergence to wrong solution
@@ -312,18 +314,58 @@ def calc_incl_from_radii_ratios_phase_incl(
 
     """
     # Make radii_ratio_rad and all dependencies functions of inclination.
+    # Note: stdout and stderr are delayed if called within a loop in an IPython Notebook.
     sep_proj_ext = lambda incl: calc_sep_proj_from_incl_phase(incl=incl, phase_orb=phase_orb_ext)
     sep_proj_int = lambda incl: calc_sep_proj_from_incl_phase(incl=incl, phase_orb=phase_orb_int)
     radii_sep = lambda incl: calc_radii_sep_from_seps(sep_proj_ext=sep_proj_ext(incl=incl),
                                                       sep_proj_int=sep_proj_int(incl=incl))
     radii_ratio_rad = lambda incl: calc_radii_ratio_from_rads(*radii_sep(incl=incl))
     diff_radii_ratios = lambda incl: radii_ratio_lt - radii_ratio_rad(incl=incl)
+    fmt_parameters =  \
+      ("    radii_ratio_lt = {rrl}\n" +
+       "    phase_orb_ext  = {poe}\n" +
+       "    phase_orb_int  = {poi}\n" +
+       "    tol            = {tol}").format(
+           rrl=radii_ratio_lt, poe=phase_orb_ext, poi=phase_orb_int, tol=tol)
     # Minimize difference between independent radii_ratio values to a tolerance
+    # Note: A naive implentation of scipy.optimize.minimize will not find the solution
+    # for some parameters due to the non-differentiability of `abs(diff_radii_ratios)`
     # Note: diff_radii_ratios is monotonically decreasing with a zero
     # at the solution for self-consistent inclination:
     # - For incl < incl_soln, diff_radii_ratios > 0.
     # - For incl > incl_soln, diff_radii_ratios < 0.
+    # Find the solution to within `tol` by recursively zooming in where
+    # `diff_radii_ratios` changes sign.
     pdb.set_trace()
+    incls = np.linspace(start=0.0, stop=np.deg2rad(90.0), num=10, endpoint=True)
+    if not (diff_radii_ratios(incl=incls[0]) > diff_radii_ratios(incl=incls[-1]):
+        raise AssertionError(
+            "Program error. `diff_radii_ratios` must be monotonically decreasing.")
+    if ((diff_radii_ratios(incl=incls[0]) > 0.0) and
+        (diff_radii_ratios(incl=incls[-1] < 0.0))):
+        itol = (diff_radii_ratios(incl=incls[0]) - diff_radii_ratios(incl=incls[-1]))
+        inum = 0
+        while ((itol > tol) and (inum < maxiter)):
+            diffs = map(diff_radii_ratios, incls)
+            idx_diff_least_pos = len(diffs[diffs > 0.0]) - 1
+            idx_diff_least_neg = -1 * len(diffs[diffs < 0.0])
+            incl = incls[idx_diff_least_pos]
+            itol = abs(diff_radii_ratios(incl=incl))
+            inum += 1
+            incls = np.linspace(
+                start=incls[idx_diff_least_pos], stop=incls[idx_dif_least_neg], num=10, endpoint=True)
+        if inum >= maxiter:
+            warnings.warn(
+                ("\n" +
+                "    Difference in radii ratios did not converge to within tolerance:\n" +
+                fmt_parameters)
+    else:
+        incl = np.nan
+        warnings.warn(
+            ("\n" +
+             "    Inclination does not yield self-consistent solution for model.\n" +
+             "    Input parameters cannot be fit by model:\n" +
+             fmt_parameters)
     result = sci_opt.minimize(fun=diff_radii_ratios, x0=incl_init, tol=1e-4)
     incl = result['x'][0]
     if incl > np.deg2rad(90.0):
@@ -360,8 +402,7 @@ def calc_incl_from_radii_ratios_phase_incl(
              "    radii_ratio_lt  = radius_s / radius_g from light levels = {rlt}").format(
                  rtime=radii_ratio_rad(incl=incl),
                  rlt=radii_ratio_lt))
-    if diff_radii_ratios(incl) > tol:
-        # Note: Warning message is delayed if called within a loop in an IPython Notebook.
+    if (incl is not np.nan) and (diff_radii_ratios(incl) > tol):
         warnings.warn(
             ("\n" +
              "    Inclination does not yield self-consistent solution for model.\n" +
