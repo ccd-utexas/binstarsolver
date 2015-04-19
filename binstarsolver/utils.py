@@ -287,6 +287,7 @@ def calc_incl_from_radii_ratios_phase_incl(
         abs('radii ratio from light levels' - 'radii ratio from eclipse events') < tol.
     maxiter : {10}, int, optional
         Maximum number of iterations to perform when solving for inclination.
+        For `tol = 1e-4`, the solution typically converges within 5 iterations.
     show_plots : {True}, bool, optional
         Create and show diagnostic plots of difference in independent radii ratio values vs inclination angle.
         Use to check solution in case initial guess for inclination angle caused convergence to wrong solution
@@ -296,6 +297,7 @@ def calc_incl_from_radii_ratios_phase_incl(
     -------
     incl : float
         Orbital inclination. Angle between line of sight and the axis of the orbit. Unit is radians.
+        If solution does not exist or does not converge, `incl = numpy.nan`
     
     See Also
     --------
@@ -317,8 +319,8 @@ def calc_incl_from_radii_ratios_phase_incl(
     # Note: stdout and stderr are delayed if called within a loop in an IPython Notebook.
     sep_proj_ext = lambda incl: calc_sep_proj_from_incl_phase(incl=incl, phase_orb=phase_orb_ext)
     sep_proj_int = lambda incl: calc_sep_proj_from_incl_phase(incl=incl, phase_orb=phase_orb_int)
-    radii_sep = lambda incl: calc_radii_sep_from_seps(sep_proj_ext=sep_proj_ext(incl=incl),
-                                                      sep_proj_int=sep_proj_int(incl=incl))
+    radii_sep = lambda incl: calc_radii_sep_from_seps(
+        sep_proj_ext=sep_proj_ext(incl=incl), sep_proj_int=sep_proj_int(incl=incl))
     radii_ratio_rad = lambda incl: calc_radii_ratio_from_rads(*radii_sep(incl=incl))
     diff_radii_ratios = lambda incl: radii_ratio_lt - radii_ratio_rad(incl=incl)
     fmt_parameters =  \
@@ -327,7 +329,7 @@ def calc_incl_from_radii_ratios_phase_incl(
        "    phase_orb_int  = {poi}\n" +
        "    tol            = {tol}").format(
            rrl=radii_ratio_lt, poe=phase_orb_ext, poi=phase_orb_int, tol=tol)
-    # Minimize difference between independent radii_ratio values to a tolerance
+    # Minimize difference between independent radii_ratio values to within a tolerance.
     # Note: A naive implentation of scipy.optimize.minimize will not find the solution
     # for some parameters due to the non-differentiability of `abs(diff_radii_ratios)`
     # Note: diff_radii_ratios is monotonically decreasing with a zero
@@ -336,85 +338,85 @@ def calc_incl_from_radii_ratios_phase_incl(
     # - For incl > incl_soln, diff_radii_ratios < 0.
     # Find the solution to within `tol` by recursively zooming in where
     # `diff_radii_ratios` changes sign.
-    pdb.set_trace()
-    incls = np.linspace(start=0.0, stop=np.deg2rad(90.0), num=10, endpoint=True)
-    if not (diff_radii_ratios(incl=incls[0]) > diff_radii_ratios(incl=incls[-1]):
+    incls = np.deg2rad(np.linspace(start=0.0, stop=90.0, num=10, endpoint=True))
+    diffs = np.asarray(map(diff_radii_ratios, incls))
+    if not (np.all(np.diff(diffs) <= 0.0)):
         raise AssertionError(
             "Program error. `diff_radii_ratios` must be monotonically decreasing.")
-    if ((diff_radii_ratios(incl=incls[0]) > 0.0) and
-        (diff_radii_ratios(incl=incls[-1] < 0.0))):
-        itol = (diff_radii_ratios(incl=incls[0]) - diff_radii_ratios(incl=incls[-1]))
+    if (diffs[0] > 0.0) and (diffs[-1] < 0.0):
+        itol = diffs[0] - diffs[-1]
         inum = 0
-        while ((itol > tol) and (inum < maxiter)):
-            diffs = map(diff_radii_ratios, incls)
+        while (itol > tol) and (inum < maxiter):
+            pdb.set_trace()
+            if inum > 0:
+                incls = \
+                    np.linspace(
+                        start=incls[idx_diff_least_pos], stop=incls[idx_diff_least_neg],
+                        num=10, endpoint=True)
+                diffs = np.asarray(map(diff_radii_ratios, incls))
             idx_diff_least_pos = len(diffs[diffs > 0.0]) - 1
             idx_diff_least_neg = -1 * len(diffs[diffs < 0.0])
             incl = incls[idx_diff_least_pos]
             itol = abs(diff_radii_ratios(incl=incl))
             inum += 1
-            incls = np.linspace(
-                start=incls[idx_diff_least_pos], stop=incls[idx_dif_least_neg], num=10, endpoint=True)
-        if inum >= maxiter:
+        # Check exit condition and solution.
+        if (itol > tol) and (inum >= maxiter):
+            incl = np.nan
             warnings.warn(
                 ("\n" +
-                "    Difference in radii ratios did not converge to within tolerance:\n" +
-                fmt_parameters)
+                "    Difference in radii ratios did not converge to within tolerance.\n" +
+                "    Input parameters:\n" +
+                fmt_parameters))
+        if radii_ratio_rad(incl=incl) < 0.1:
+            warnings.warn(
+                ("\n" +
+                "    From eclipse timing events, ratio of smaller star's radius\n" +
+                "    to greater star's radius is < 0.1. The radii ratio as calculated\n" +
+                "    from light levels may not be valid (e.g. for a binary system with\n" +
+                "    a main sequence star and a red giant).\n" +
+                "    VALID:\n" +
+                "    radii_ratio_rad = radius_s / radius_g from eclipse timings = {rtime}\n" +
+                "    MAYBE INVALID:\n" +
+                "    radii_ratio_lt  = radius_s / radius_g from light levels = {rlt}").format(
+                    rtime=radii_ratio_rad(incl=incl),
+                    rlt=radii_ratio_lt))
     else:
         incl = np.nan
         warnings.warn(
             ("\n" +
              "    Inclination does not yield self-consistent solution for model.\n" +
              "    Input parameters cannot be fit by model:\n" +
-             fmt_parameters)
-    result = sci_opt.minimize(fun=diff_radii_ratios, x0=incl_init, tol=1e-4)
-    incl = result['x'][0]
-    if incl > np.deg2rad(90.0):
-        incl = np.deg2rad(180.0) - incl
-    # Create and show diagnostic plot.
+             fmt_parameters))
+    # Create and show diagnostic plots.
     if show_plots:
-        incls_out = np.deg2rad(np.linspace(0, 90, num=1000))
+        incls_out = np.deg2rad(np.linspace(start=0, stop=90, num=100))
         diff_radii_ratios_out = map(diff_radii_ratios, incls_out)
         plt.plot(np.rad2deg(incls_out), diff_radii_ratios_out)
+        plt.axhline(0.0, color='black', linestyle='--')
         plt.title("Difference between independent radii ratio values\n" +
                   "vs inclination angle (zoomed out view)")
-        plt.ylabel("abs(radii_ratio_lt - radii_ratio_rad(incl))")
-        plt.xlabel("inclination angle (degrees)")
+        xlabel = "inclination angle (degrees)"
+        ylabel = "radii ratio from light levels - radii ratio from eclipse events"
+        plt.xlabel(xlabel)
+        plt.ylabel(ylabel)
         plt.show()
-        incls_in = np.deg2rad(np.linspace(np.rad2deg(incl) - 1.0, np.rad2deg(incl) + 1.0, num=1000))
-        diff_radii_ratios_in = map(diff_radii_ratios, incls_in)
-        plt.plot(np.rad2deg(incls_in), diff_radii_ratios_in)
-        plt.title("Difference between independent radii ratio values\n" +
-                  "vs inclination angle (zoomed in view)")
-        plt.ylabel("abs(radii_ratio_lt - radii_ratio_rad(incl))")
-        plt.xlabel("inclination angle (degrees)")
-        plt.show()
-    # Check solutions.
-    if radii_ratio_rad(incl=incl) < 0.1:
-        warnings.warn(
-            ("\n" +
-             "    From eclipse timing events, ratio of smaller star's radius\n" +
-             "    to greater star's radius is < 0.1. The radii ratio as calculated\n" +
-             "    from light levels may not be valid (e.g. for a binary system with\n" +
-             "    a main sequence star and a red giant).\n" +
-             "    VALID:\n" +
-             "    radii_ratio_rad = radius_s / radius_g from eclipse timings = {rtime}\n" +
-             "    MAYBE INVALID:\n" +
-             "    radii_ratio_lt  = radius_s / radius_g from light levels = {rlt}").format(
-                 rtime=radii_ratio_rad(incl=incl),
-                 rlt=radii_ratio_lt))
-    if (incl is not np.nan) and (diff_radii_ratios(incl) > tol):
-        warnings.warn(
-            ("\n" +
-             "    Inclination does not yield self-consistent solution for model.\n" +
-             "    Input parameters cannot be fit by model:\n" +
-             "    radii_ratio_lt   = {rrl}\n" +
-             "    phase_orb_ext    = {poe}\n" +
-             "    phase_orb_int    = {poi}\n" +
-             "    incl_init        = {ii}").format(
-                 rrl=radii_ratio_lt,
-                 poe=phase_orb_ext,
-                 poi=phase_orb_int,
-                 ii=incl_init))
+        if incl is not np.nan:
+            incls_in = \
+                np.deg2rad(
+                    np.linspace(
+                        start=np.rad2deg(incl) - 1.0,
+                        stop=min(np.rad2deg(incl) + 1.0, 90.0),
+                        num=100))
+            diff_radii_ratios_in = map(diff_radii_ratios, incls_in)
+            plt.plot(np.rad2deg(incls_in), diff_radii_ratios_in)
+            plt.axhline(0.0, color='black', linestyle='--')
+            plt.title("Difference between independent radii ratio values\n" +
+                      "vs inclination angle (zoomed in view)")
+            plt.xlabel(xlabel)
+            plt.ylabel(ylabel)
+            plt.show()
+        else:
+            warnings.warn("\nNo inclination solution found.")
     return incl
 
 
