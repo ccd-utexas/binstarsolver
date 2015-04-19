@@ -147,7 +147,7 @@ def test_calc_radii_ratio_from_rads(
 
 def test_calc_incl_from_radii_ratios_phase_incl(
     radii_ratio_lt=0.53911583146179209, phase_orb_ext=0.21467549799530256,
-    phase_orb_int=0.061086523819801536, incl_init=np.deg2rad(85.0), show_plots=False,
+    phase_orb_int=0.061086523819801536, tol=1e-4, maxiter=10, show_plots=False,
     incl=1.5514042883817927):
     """Test that calculations are correct using example from section 7.3, page 261 of [1]_
 
@@ -159,9 +159,16 @@ def test_calc_incl_from_radii_ratios_phase_incl(
     assert np.isclose(
         bss.utils.calc_incl_from_radii_ratios_phase_incl(
             radii_ratio_lt=radii_ratio_lt, phase_orb_ext=phase_orb_ext,
-            phase_orb_int=phase_orb_int, incl_init=incl_init, show_plots=show_plots),
+            phase_orb_int=phase_orb_int, tol=tol, maxiter=maxiter, show_plots=show_plots),
         incl)
     return None
+
+
+# Test special cases for test_calc_incl_from_radii_ratios_phase_incl
+test_calc_incl_from_radii_ratios_phase_incl(
+    radii_ratio_lt=0.4381670461247158, phase_orb_ext=0.0469912,
+    phase_orb_int=0.01681132, tol=1e-4, maxiter=10, show_plots=False,
+    incl=1.5628010760257987)
 
 
 def test_calc_semimaj_axis_from_period_velr_incl(

@@ -7,7 +7,6 @@
 
 # Import standard packages.
 from __future__ import absolute_import, division, print_function
-import pdb
 import sys
 import warnings
 # Import installed packages.
@@ -347,7 +346,6 @@ def calc_incl_from_radii_ratios_phase_incl(
         itol = diffs[0] - diffs[-1]
         inum = 0
         while (itol > tol) and (inum < maxiter):
-            pdb.set_trace()
             if inum > 0:
                 incls = \
                     np.linspace(
