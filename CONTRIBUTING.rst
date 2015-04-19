@@ -8,3 +8,4 @@ Thanks for your interest in contributing! Please use the following:
 * Docstring style: https://github.com/numpy/numpy/blob/master/doc/example.py
 * Coding style: https://google-styleguide.googlecode.com/svn/trunk/pyguide.html
 * Versioning: http://semver.org/
+* Change log: http://keepachangelog.com/
