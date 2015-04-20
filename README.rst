@@ -1,6 +1,9 @@
 binstarsolver
 =============
 
+.. image:: https://zenodo.org/badge/4765/ccd-utexas/binstarsolver.svg   
+        :target: http://dx.doi.org/10.5281/zenodo.16983
+
 Estimate physical quantities of a binary star system from observed quantities.
 
 Description
@@ -22,8 +25,6 @@ Examples and Q&A forum
 
 Citations
 ---------
-
-.. image:: https://zenodo.org/badge/4765/ccd-utexas/binstarsolver.svg   :target: http://dx.doi.org/10.5281/zenodo.16983
 
 * If this code is useful to your academic research, please consider citing it by including this DOI link: http://dx.doi.org/10.5281/zenodo\
 .16983
