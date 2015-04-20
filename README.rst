@@ -15,7 +15,7 @@ For the Python Packaging Index `binstarsolver <https://pypi.python.org/pypi/bins
 Examples 
 --------
 
-For explanations of examples, please see the `wiki <https://github.com/ccd-utexas/binstarsolver/wiki>`_.
+For explanations of examples, please see the `GitHub wiki <https://github.com/ccd-utexas/binstarsolver/wiki>`_.
 Contributions are always welcome!
 
 Q&A Forum
