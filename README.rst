@@ -18,7 +18,7 @@ Examples
 For explanations of examples, please see the `GitHub wiki <https://github.com/ccd-utexas/binstarsolver/wiki>`_.
 Contributions are always welcome!
 
-Q&A Forum
+Q&A forum
 ---------
 
 For questions and discussion, please see the `Google group <https://groups.google.com/forum/#!forum/binstarsolver>`_.
@@ -27,14 +27,15 @@ Contributions are always welcome!
 Got a second for a `user survey <https://docs.google.com/forms/d/1vneANTMMaOdQSRvIm2OJYItgaTTbp4f9EM8ImKqwD-g/viewform>`_?
 I'd love your feedback! Thank you for being part of open science. (All survey responses are anonymous.)
 
-Installation
-------------
+Installation and upgrades
+-------------------------
 
 Use `Python Packaging Index <https://pypi.python.org/pypi>`_:
 
 ::
 
    $ pip install binstarsolver
+   $ pip install binstarsolver --upgrade
 
 Testing
 -------
