@@ -43,7 +43,7 @@ setuptools.setup(
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.4',
     ],
-    keywords='astronomy binary stars observing',
+    keywords='astronomy astrophysics binary stars observing',
     packages=setuptools.find_packages(exclude=['contrib', 'docs', 'tests*']),
     # Run-time dependencies. Will be installed by pip.
     # https://packaging.python.org/en/latest/requirements.html
