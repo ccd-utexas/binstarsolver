@@ -6,7 +6,7 @@ Estimate physical quantities of a binary star system from observed quantities.
 Description
 -----------
 
-See DESCRIPTION.rst.
+For the Python Packaging Index `binstarsolver <https://pypi.python.org/pypi/binstarsolver>`_ description, see DESCRIPTION.rst.
 
 .. toctree::
 
@@ -15,7 +15,7 @@ See DESCRIPTION.rst.
 Examples 
 --------
 
-For explanations of examples, please see the `wiki <https://github.com/ccd-utexas/binstarsolver/wiki>`_.   
+For explanations of examples, please see the `wiki <https://github.com/ccd-utexas/binstarsolver/wiki>`_.
 Contributions are always welcome!
 
 Q&A Forum
