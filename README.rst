@@ -26,8 +26,7 @@ Examples and Q&A forum
 Citations
 ---------
 
-* If this code is useful to your academic research, please consider citing it by including this DOI link: http://dx.doi.org/10.5281/zenodo\
-.16983
+* If this code is useful to your academic research, please consider citing it by including this DOI link: http://dx.doi.org/10.5281/zenodo.16983
 
 Installation and upgrades
 -------------------------
