@@ -35,6 +35,14 @@ Examples and Q&A forum
 * For questions and discussion, please see the `binstarsolver Google group <https://groups.google.com/forum/#!forum/binstarsolver>`_.
 * Got a second for a `user survey <https://docs.google.com/forms/d/1vneANTMMaOdQSRvIm2OJYItgaTTbp4f9EM8ImKqwD-g/viewform>`_? I'd love your feedback! Thank you for being part of open science. (All survey responses are anonymous.)
 
+Recent changes
+--------------
+* [v0.1.3] - 20150419T220000
+   - Created Google group, DOI for citations, CHANGELOG.rst, IPython Notebook examples.
+   - Fixed special cases where solver for inclination did not converge.
+* [v0.1.2] - 20150123T172000
+   - Initial release to PyPI.
+
 References
 ----------
 
