@@ -20,8 +20,7 @@ Examples and Q&A forum
 
 * For explanations of examples, please see the `binstarsolver GitHub wiki <https://github.com/ccd-utexas/binstarsolver/wiki>`_.
 * For questions and discussion, please see the `binstarsolver Google group <https://groups.google.com/forum/#!forum/binstarsolver>`_.
-* Got a second for a `user survey <https://docs.google.com/forms/d/1vneANTMMaOdQSRvIm2OJYItgaTTbp4f9EM8ImKqwD-g/viewform>`_? I'd love your\
- feedback! Thank you for being part of open science. (All survey responses are anonymous.)
+* Got a second for a `user survey <https://docs.google.com/forms/d/1vneANTMMaOdQSRvIm2OJYItgaTTbp4f9EM8ImKqwD-g/viewform>`_? I'd love your feedback! Thank you for being part of open science. (All survey responses are anonymous.)
 
 Citations
 ---------
