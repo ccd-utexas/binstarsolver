@@ -55,7 +55,7 @@ Contributing
 ------------
 
 For contributing code, please see CONTRIBUTING.rst.
-For other ways to contribute, please see the sections Examples and Q&A Forum above.
+For other ways to contribute, please see the sections 'Examples' and 'Q&A forum' above.
 
 .. toctree::
 
