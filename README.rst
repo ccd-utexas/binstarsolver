@@ -12,10 +12,17 @@ See DESCRIPTION.rst.
 
    DESCRIPTION
 
-Examples
+Examples 
 --------
 
-See repository `wiki <https://github.com/ccd-utexas/binstarsolver/wiki>`_.
+For explanations of examples, please see the `wiki <https://github.com/ccd-utexas/binstarsolver/wiki>`_.
+Contributions are always welcome!
+
+Questions
+---------
+
+For questions and discussion, please see the `Google group <https://groups.google.com/forum/#!forum/binstarsolver>`_.
+Contributions are always welcome!
 
 Installation
 ------------
