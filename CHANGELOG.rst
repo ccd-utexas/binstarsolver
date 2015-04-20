@@ -5,7 +5,7 @@ CHANGELOG
 * This project adheres to `Semantic Versioning <http://semver.org/>`_.
 * This change log is adapted from to `Keep a CHANGELOG <http://keepachangelog.com/>`_.
 
-[v0.1.3] - 20150419T220000
+[v0.1.3] - 20150420T180000
 --------------------------
 Added
 ^^^^^

@@ -37,7 +37,7 @@ Examples and Q&A forum
 
 Recent changes
 --------------
-* [v0.1.3] - 20150419T220000
+* [v0.1.3] - 20150420T180000
    - Created Google group, DOI for citations, CHANGELOG.rst, IPython Notebook examples.
    - Fixed special cases where solver for inclination did not converge.
 * [v0.1.2] - 20150123T172000
