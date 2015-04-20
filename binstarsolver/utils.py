@@ -266,9 +266,11 @@ def calc_radii_ratio_from_rads(radius_sep_s, radius_sep_g):
 
 
 def calc_incl_from_radii_ratios_phase_incl(
-    radii_ratio_lt, phase_orb_ext, phase_orb_int, tol=1e-4, maxiter=10, show_plots=False):
-    """Calculate inclination angle by minimizing difference of ratios of stellar radii as calulated
-    from light levels and light curve events (tangencies) for various values of inclination.
+    radii_ratio_lt, phase_orb_ext, phase_orb_int,
+    tol=1e-4, maxiter=10, show_plots=False):
+    """Calculate inclination angle by minimizing difference of ratios of
+    stellar radii as calulated from light levels and light curve events
+    (tangencies) for various values of inclination.
     
     Parameters
     ----------
@@ -277,36 +279,43 @@ def calc_incl_from_radii_ratios_phase_incl(
         calculated from light levels during occultation and transit.
         radii_ratio = radius_s / radius_g
     phase_orb_ext : float
-        Orbital phase angle at external tangencies (e.g. begin ingress, end egress). Unit is radians.
+        Orbital phase angle at external tangencies
+        (e.g. begin ingress, end egress). Unit is radians.
     phase_orb_int : float
-        Orbital phase angle at internal tangencies (e.g. end ingress, begin egress). Unit is radians.
+        Orbital phase angle at internal tangencies
+        (e.g. end ingress, begin egress). Unit is radians.
     tol : {1e-4}, float, optional
-        Maximum tolerance for difference in radii ratios at a self-consistent solution for inclination,
-        i.e. at solved inclination:
-        abs('radii ratio from light levels' - 'radii ratio from eclipse events') < tol.
+        Maximum tolerance for difference in radii ratios at a self-consistent
+        solution for inclination, i.e. at solved inclination:
+        abs('radii ratio from light levels' -
+            'radii ratio from eclipse events') < tol.
     maxiter : {10}, int, optional
         Maximum number of iterations to perform when solving for inclination.
         For `tol = 1e-4`, the solution typically converges within 5 iterations.
-    show_plots : {True}, bool, optional
-        Create and show diagnostic plots of difference in independent radii ratio values vs inclination angle.
-        Use to check solution in case initial guess for inclination angle caused convergence to wrong solution
-        for inclination angle.
+    show_plots : {False, True}, bool, optional
+        Create and show diagnostic plots of difference in independent radii
+        ratio values vs inclination angle. Use to check convergence of
+        solution for inclination angle.
     
     Returns
     -------
     incl : float
-        Orbital inclination. Angle between line of sight and the axis of the orbit. Unit is radians.
+        Orbital inclination. Angle between line of sight and the
+        axis of the orbit. Unit is radians.
         If solution does not exist or does not converge, `incl = numpy.nan`
     
     See Also
     --------
-    calc_sep_proj_from_incl_phase, calc_radius_sep_s_from_sep, calc_radius_sep_g_from_sep, calc_radii_ratio_from_light
+    calc_sep_proj_from_incl_phase, calc_radius_sep_s_from_sep,
+    calc_radius_sep_g_from_sep, calc_radii_ratio_from_light
     
     Notes
     -----
-    - Method uses calc_radii_ratio_from_light, which may not be valid for stars in different stages of evolution
-        or for radii ratios > 10 (e.g. a binary system with main sequence star and a red giant)
-    - Compares two independent ways of calculating radii_ratio in order to infer inclination angle. 
+    - Compares two independent ways of calculating radii_ratio in order
+        to infer inclination angle. 
+    - Method uses calc_radii_ratio_from_light, which may not be valid
+        for stars in different stages of evolution or for radii ratios > 10
+        (e.g. a binary system with main sequence star and a red giant)
     - Equations from section 7.3 of [1]_.
     
     References
@@ -315,29 +324,38 @@ def calc_incl_from_radii_ratios_phase_incl(
 
     """
     # Make radii_ratio_rad and all dependencies functions of inclination.
-    # Note: stdout and stderr are delayed if called within a loop in an IPython Notebook.
-    sep_proj_ext = lambda incl: calc_sep_proj_from_incl_phase(incl=incl, phase_orb=phase_orb_ext)
-    sep_proj_int = lambda incl: calc_sep_proj_from_incl_phase(incl=incl, phase_orb=phase_orb_int)
-    radii_sep = lambda incl: calc_radii_sep_from_seps(
-        sep_proj_ext=sep_proj_ext(incl=incl), sep_proj_int=sep_proj_int(incl=incl))
-    radii_ratio_rad = lambda incl: calc_radii_ratio_from_rads(*radii_sep(incl=incl))
-    diff_radii_ratios = lambda incl: radii_ratio_lt - radii_ratio_rad(incl=incl)
+    # NOTE: stdout and stderr are delayed if called within an IPython Notebook.
+    sep_proj_ext = lambda incl: \
+        calc_sep_proj_from_incl_phase(incl=incl, phase_orb=phase_orb_ext)
+    sep_proj_int = lambda incl: \
+        calc_sep_proj_from_incl_phase(incl=incl, phase_orb=phase_orb_int)
+    radii_sep = lambda incl: \
+        calc_radii_sep_from_seps(
+            sep_proj_ext=sep_proj_ext(incl=incl),
+            sep_proj_int=sep_proj_int(incl=incl))
+    radii_ratio_rad = lambda incl: \
+        calc_radii_ratio_from_rads(*radii_sep(incl=incl))
+    diff_radii_ratios = lambda incl: \
+        radii_ratio_lt - radii_ratio_rad(incl=incl)
     fmt_parameters =  \
       ("    radii_ratio_lt = {rrl}\n" +
        "    phase_orb_ext  = {poe}\n" +
        "    phase_orb_int  = {poi}\n" +
        "    tol            = {tol}").format(
            rrl=radii_ratio_lt, poe=phase_orb_ext, poi=phase_orb_int, tol=tol)
-    # Minimize difference between independent radii_ratio values to within a tolerance.
-    # Note: A naive implentation of scipy.optimize.minimize will not find the solution
-    # for some parameters due to the non-differentiability of `abs(diff_radii_ratios)`
-    # Note: diff_radii_ratios is monotonically decreasing with a zero
+    # Minimize difference between independent radii_ratio values
+    # to within a tolerance.
+    # NOTE: A naive application of scipy.optimize.minimize to
+    # `abs(diff_radii_ratios)` will not find the solution for some parameters
+    # due to non-differentiability.
+    # NOTE: diff_radii_ratios is monotonically decreasing with a zero
     # at the solution for self-consistent inclination:
     # - For incl < incl_soln, diff_radii_ratios > 0.
     # - For incl > incl_soln, diff_radii_ratios < 0.
     # Find the solution to within `tol` by recursively zooming in where
     # `diff_radii_ratios` changes sign.
-    incls = np.deg2rad(np.linspace(start=0.0, stop=90.0, num=10, endpoint=True))
+    incls = \
+        np.deg2rad(np.linspace(start=0.0, stop=90.0, num=10, endpoint=True))
     diffs = np.asarray(map(diff_radii_ratios, incls))
     if not (np.all(np.diff(diffs) <= 0.0)):
         raise AssertionError(
@@ -349,7 +367,8 @@ def calc_incl_from_radii_ratios_phase_incl(
             if inum > 0:
                 incls = \
                     np.linspace(
-                        start=incls[idx_diff_least_pos], stop=incls[idx_diff_least_neg],
+                        start=incls[idx_diff_least_pos],
+                        stop=incls[idx_diff_least_neg],
                         num=10, endpoint=True)
                 diffs = np.asarray(map(diff_radii_ratios, incls))
             idx_diff_least_pos = len(diffs[diffs > 0.0]) - 1
@@ -394,7 +413,7 @@ def calc_incl_from_radii_ratios_phase_incl(
         plt.title("Difference between independent radii ratio values\n" +
                   "vs inclination angle (zoomed out view)")
         xlabel = "inclination angle (degrees)"
-        ylabel = "radii ratio from light levels - radii ratio from eclipse events"
+        ylabel = "radii ratio from light levels -\nradii ratio from eclipse events"
         plt.xlabel(xlabel)
         plt.ylabel(ylabel)
         plt.show()
