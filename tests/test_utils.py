@@ -21,7 +21,9 @@ from __future__ import absolute_import, division, print_function
 import sys
 sys.path.insert(0, '.') # Test the code in this repository.
 # Import installed packages.
+import astropy.constants as ast_con
 import numpy as np
+import scipy.constants as sci_con
 # Import local packages.
 import binstarsolver as bss
 
@@ -352,7 +354,7 @@ def test_calc_mass_function_from_period_velr(
     
     """
     assert np.isclose(
-        code.utils.calc_mass_function_from_period_velr(
+        bss.utils.calc_mass_function_from_period_velr(
             period=period, velr1=velr1),
         mfunc)
     return None
@@ -370,7 +372,7 @@ def test_calc_velr2_from_masses_period_incl_velr1(
     
     """
     assert np.isclose(
-        code.utils.calc_velr2_from_masses_period_incl_velr1(
+        bss.utils.calc_velr2_from_masses_period_incl_velr1(
             mass1=mass1, mass2=mass2, velr1=velr1, period=period, incl=incl),
         velr2)
     return None
@@ -386,7 +388,7 @@ def test_calc_logg_from_mass_radius(
     
     """
     assert np.isclose(
-        code.utils.calc_logg_from_mass_radius(mass=mass, radius=radius),
+        bss.utils.calc_logg_from_mass_radius(mass=mass, radius=radius),
         logg)
     return None
 
@@ -401,6 +403,6 @@ def test_calc_loglum_from_radius_teff(
     
     """
     assert np.isclose(
-        code.utils.calc_loglum_from_radius_teff(radius=radius, teff=teff),
+        bss.utils.calc_loglum_from_radius_teff(radius=radius, teff=teff),
         loglum, atol=1e-4)
     return None

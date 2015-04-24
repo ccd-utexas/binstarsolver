@@ -10,8 +10,8 @@ from __future__ import absolute_import, division, print_function
 import sys
 import warnings
 # Import installed packages.
+import astropy.constants as ast_con
 import numpy as np
-import scipy.optimize as sci_opt
 import scipy.constants as sci_con
 import matplotlib.pyplot as plt
 
