@@ -781,3 +781,143 @@ def calc_lum_ratio_from_radii_teff_ratios(radii_ratio, teff_ratio):
     """
     lum_ratio = radii_ratio**2.0 * teff_ratio**4.0
     return lum_ratio
+
+
+def calc_mass_function_from_period_velr(period, velr1):
+    """Calculate the mass function of a binary system from the binary period and
+    the observed radial velocity, e.g. for a single-line spectroscopic binary.
+    
+    Parameters
+    ----------
+    period : float
+        Period of eclipse. Unit is seconds.
+    velr1 : float
+        Semi-amplitude of radial velocity of star 1, the brighter star that is observed.
+        Unit is m/s.
+    
+    Returns
+    -------
+    mfunc : float
+        Mass function for the binary system. Without knowing the mass of star 1 or the inclination,
+        the mass function sets a lower limit for the mass of star 2. Unit is kg.
+    
+    Notes
+    -----
+    mass function =
+        (m2 * sin(i))**3 / (m1 + m2)**2 = (P * v1r**3) / (2*pi*G)
+    From equation 7.7 of [1]_.
+    
+    References
+    ----------
+    .. [1] Carroll and Ostlie, 2007, An Introduction to Modern Astrophysics
+    
+    """
+    mfunc = (period * velr1**3.0) / (2.0*np.pi*sci_con.G)
+    return mfunc
+
+
+def calc_velr2_from_masses_period_incl_velr1(mass1, mass2, velr1, period, incl):
+    """Calculate the semi-amplitude of the radial velocity of star2 from given masses,
+    period, orbital inclination, and semi-amplitude of the radial velocity of star1.
+    
+    Convenience function for handling modeled data from Gianninas et al 2014.
+    Assumes orbital excentricity << 1.
+    
+    Parameters
+    ----------
+    mass1 : float
+        Mass of star 1. Unit is kg.
+    mass2 : float
+        Mass of star 2. Unit is kg.
+    velr1 : float
+        Semi-amplitude of radial velocity of star 1. Unit is m/s.
+    period : float
+        Period of eclipse. Unit is seconds.
+    incl : float
+        Orbital inclination. Angle between line of sight and the axis of the orbit. Unit is radians.
+
+    Returns
+    -------
+    velr2 : float
+        Semi-amplitude of radial velocity of star 1. Unit is m/s.
+    
+    Notes
+    -----
+    a = (P/(2*pi)) * (v1 + v2), where a is semi-major axis of low-eccentricity orbit,
+        P is orbital period, v is orbital velocity.
+    P**2 = ((4*pi**2) / (G*(m1 + m2))) * a**3, where G is gravitational constant,
+    m is stellar mass. Kepler's Third Law.
+    v = vr / sin(i), where vr is observed radial orbital velocity, i is orbital inclination.
+    => m1 + m2 = P/(2*pi*G) * ((v1r + v2r) / sin(i))**3  
+       v2r = ((m1 + m2)((2*pi*G)/P)(sin(i)**3))**(1/3) - v1r
+    From equation 7.6 in section 7.3 of [1]_.
+    Function adapted from [2]_.
+    
+    References
+    ----------
+    .. [1] Carroll and Ostlie, 2007, An Introduction to Modern Astrophysics
+    .. [2] https://pypi.python.org/pypi/binstarsolver/0.1.2
+    
+    """
+    velr2 = ((mass1 + mass2) * ((2.0*np.pi*sci_con.G) / period) * (np.sin(incl))**3.0)**(1.0/3.0) - velr1
+    return velr2
+
+
+def calc_logg_from_mass_radius(mass, radius):
+    """Calculate the surface gravity of a star from its mass.
+    
+    Parameters
+    ----------
+    mass : float
+        Stellar mass. Unit is kg.
+    radius : float
+        Stellar radius. Unit is meters.
+    
+    Returns
+    -------
+    logg : float
+        Log10 of surface gravity of the star. Unit is dex cm/s^2 (dex Gal).
+    
+    Notes
+    -----
+    g = G*M/R**2
+    From Eqn 2.12 of [1]_.
+    
+    References
+    ----------
+    .. [1] Carroll and Ostlie, 2007, An Introduction to Modern Astrophysics
+    
+    """
+    logg = np.log10((sci_con.G*mass/(radius**2.0)) * sci_con.hecto)
+    return logg
+
+
+def calc_loglum_from_radius_teff(radius, teff):
+    """Calculate the log luminosity of a star from its radius and effective temperature.
+    
+    Parameters
+    ----------
+    radius : float
+        Stellar radius. Unit is meters.
+    teff : float
+        Stellar effective temperature. Unit is Kelvin.
+    
+    Returns
+    -------
+    loglum : float
+        Log10 luminosity of the star. Unit is dex Lsun.
+    
+    Notes
+    -----
+    L = 4*pi*R^2*sig*Teff^4,
+    where sig is the Stefan-Boltzmann constant.
+    From Eqn 3.17 of [1]_.
+    
+    References
+    ----------
+    .. [1] Carroll and Ostlie, 2007, An Introduction to Modern Astrophysics
+    
+    """
+    loglum = np.log10((4.0*np.pi*(radius**2.0)*sci_con.Stefan_Boltzmann*(teff**4.0)) / \
+                      ast_con.L_sun.value)
+    return loglum
