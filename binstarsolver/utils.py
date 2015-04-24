@@ -10,8 +10,8 @@ from __future__ import absolute_import, division, print_function
 import sys
 import warnings
 # Import installed packages.
+import astropy.constants as ast_con
 import numpy as np
-import scipy.optimize as sci_opt
 import scipy.constants as sci_con
 import matplotlib.pyplot as plt
 
@@ -266,9 +266,11 @@ def calc_radii_ratio_from_rads(radius_sep_s, radius_sep_g):
 
 
 def calc_incl_from_radii_ratios_phase_incl(
-    radii_ratio_lt, phase_orb_ext, phase_orb_int, tol=1e-4, maxiter=10, show_plots=False):
-    """Calculate inclination angle by minimizing difference of ratios of stellar radii as calulated
-    from light levels and light curve events (tangencies) for various values of inclination.
+    radii_ratio_lt, phase_orb_ext, phase_orb_int,
+    tol=1e-4, maxiter=10, show_plots=False):
+    """Calculate inclination angle by minimizing difference of ratios of
+    stellar radii as calulated from light levels and light curve events
+    (tangencies) for various values of inclination.
     
     Parameters
     ----------
@@ -277,36 +279,43 @@ def calc_incl_from_radii_ratios_phase_incl(
         calculated from light levels during occultation and transit.
         radii_ratio = radius_s / radius_g
     phase_orb_ext : float
-        Orbital phase angle at external tangencies (e.g. begin ingress, end egress). Unit is radians.
+        Orbital phase angle at external tangencies
+        (e.g. begin ingress, end egress). Unit is radians.
     phase_orb_int : float
-        Orbital phase angle at internal tangencies (e.g. end ingress, begin egress). Unit is radians.
+        Orbital phase angle at internal tangencies
+        (e.g. end ingress, begin egress). Unit is radians.
     tol : {1e-4}, float, optional
-        Maximum tolerance for difference in radii ratios at a self-consistent solution for inclination,
-        i.e. at solved inclination:
-        abs('radii ratio from light levels' - 'radii ratio from eclipse events') < tol.
+        Maximum tolerance for difference in radii ratios at a self-consistent
+        solution for inclination, i.e. at solved inclination:
+        abs('radii ratio from light levels' -
+            'radii ratio from eclipse events') < tol.
     maxiter : {10}, int, optional
         Maximum number of iterations to perform when solving for inclination.
         For `tol = 1e-4`, the solution typically converges within 5 iterations.
-    show_plots : {True}, bool, optional
-        Create and show diagnostic plots of difference in independent radii ratio values vs inclination angle.
-        Use to check solution in case initial guess for inclination angle caused convergence to wrong solution
-        for inclination angle.
+    show_plots : {False, True}, bool, optional
+        Create and show diagnostic plots of difference in independent radii
+        ratio values vs inclination angle. Use to check convergence of
+        solution for inclination angle.
     
     Returns
     -------
     incl : float
-        Orbital inclination. Angle between line of sight and the axis of the orbit. Unit is radians.
+        Orbital inclination. Angle between line of sight and the
+        axis of the orbit. Unit is radians.
         If solution does not exist or does not converge, `incl = numpy.nan`
     
     See Also
     --------
-    calc_sep_proj_from_incl_phase, calc_radius_sep_s_from_sep, calc_radius_sep_g_from_sep, calc_radii_ratio_from_light
+    calc_sep_proj_from_incl_phase, calc_radius_sep_s_from_sep,
+    calc_radius_sep_g_from_sep, calc_radii_ratio_from_light
     
     Notes
     -----
-    - Method uses calc_radii_ratio_from_light, which may not be valid for stars in different stages of evolution
-        or for radii ratios > 10 (e.g. a binary system with main sequence star and a red giant)
-    - Compares two independent ways of calculating radii_ratio in order to infer inclination angle. 
+    - Compares two independent ways of calculating radii_ratio in order
+        to infer inclination angle. 
+    - Method uses calc_radii_ratio_from_light, which may not be valid
+        for stars in different stages of evolution or for radii ratios > 10
+        (e.g. a binary system with main sequence star and a red giant)
     - Equations from section 7.3 of [1]_.
     
     References
@@ -315,29 +324,38 @@ def calc_incl_from_radii_ratios_phase_incl(
 
     """
     # Make radii_ratio_rad and all dependencies functions of inclination.
-    # Note: stdout and stderr are delayed if called within a loop in an IPython Notebook.
-    sep_proj_ext = lambda incl: calc_sep_proj_from_incl_phase(incl=incl, phase_orb=phase_orb_ext)
-    sep_proj_int = lambda incl: calc_sep_proj_from_incl_phase(incl=incl, phase_orb=phase_orb_int)
-    radii_sep = lambda incl: calc_radii_sep_from_seps(
-        sep_proj_ext=sep_proj_ext(incl=incl), sep_proj_int=sep_proj_int(incl=incl))
-    radii_ratio_rad = lambda incl: calc_radii_ratio_from_rads(*radii_sep(incl=incl))
-    diff_radii_ratios = lambda incl: radii_ratio_lt - radii_ratio_rad(incl=incl)
+    # NOTE: stdout and stderr are delayed if called within an IPython Notebook.
+    sep_proj_ext = lambda incl: \
+        calc_sep_proj_from_incl_phase(incl=incl, phase_orb=phase_orb_ext)
+    sep_proj_int = lambda incl: \
+        calc_sep_proj_from_incl_phase(incl=incl, phase_orb=phase_orb_int)
+    radii_sep = lambda incl: \
+        calc_radii_sep_from_seps(
+            sep_proj_ext=sep_proj_ext(incl=incl),
+            sep_proj_int=sep_proj_int(incl=incl))
+    radii_ratio_rad = lambda incl: \
+        calc_radii_ratio_from_rads(*radii_sep(incl=incl))
+    diff_radii_ratios = lambda incl: \
+        radii_ratio_lt - radii_ratio_rad(incl=incl)
     fmt_parameters =  \
       ("    radii_ratio_lt = {rrl}\n" +
        "    phase_orb_ext  = {poe}\n" +
        "    phase_orb_int  = {poi}\n" +
        "    tol            = {tol}").format(
            rrl=radii_ratio_lt, poe=phase_orb_ext, poi=phase_orb_int, tol=tol)
-    # Minimize difference between independent radii_ratio values to within a tolerance.
-    # Note: A naive implentation of scipy.optimize.minimize will not find the solution
-    # for some parameters due to the non-differentiability of `abs(diff_radii_ratios)`
-    # Note: diff_radii_ratios is monotonically decreasing with a zero
+    # Minimize difference between independent radii_ratio values
+    # to within a tolerance.
+    # NOTE: A naive application of scipy.optimize.minimize to
+    # `abs(diff_radii_ratios)` will not find the solution for some parameters
+    # due to non-differentiability.
+    # NOTE: diff_radii_ratios is monotonically decreasing with a zero
     # at the solution for self-consistent inclination:
     # - For incl < incl_soln, diff_radii_ratios > 0.
     # - For incl > incl_soln, diff_radii_ratios < 0.
     # Find the solution to within `tol` by recursively zooming in where
     # `diff_radii_ratios` changes sign.
-    incls = np.deg2rad(np.linspace(start=0.0, stop=90.0, num=10, endpoint=True))
+    incls = \
+        np.deg2rad(np.linspace(start=0.0, stop=90.0, num=10, endpoint=True))
     diffs = np.asarray(map(diff_radii_ratios, incls))
     if not (np.all(np.diff(diffs) <= 0.0)):
         raise AssertionError(
@@ -349,7 +367,8 @@ def calc_incl_from_radii_ratios_phase_incl(
             if inum > 0:
                 incls = \
                     np.linspace(
-                        start=incls[idx_diff_least_pos], stop=incls[idx_diff_least_neg],
+                        start=incls[idx_diff_least_pos],
+                        stop=incls[idx_diff_least_neg],
                         num=10, endpoint=True)
                 diffs = np.asarray(map(diff_radii_ratios, incls))
             idx_diff_least_pos = len(diffs[diffs > 0.0]) - 1
@@ -394,7 +413,7 @@ def calc_incl_from_radii_ratios_phase_incl(
         plt.title("Difference between independent radii ratio values\n" +
                   "vs inclination angle (zoomed out view)")
         xlabel = "inclination angle (degrees)"
-        ylabel = "radii ratio from light levels - radii ratio from eclipse events"
+        ylabel = "radii ratio from light levels -\nradii ratio from eclipse events"
         plt.xlabel(xlabel)
         plt.ylabel(ylabel)
         plt.show()
@@ -762,3 +781,143 @@ def calc_lum_ratio_from_radii_teff_ratios(radii_ratio, teff_ratio):
     """
     lum_ratio = radii_ratio**2.0 * teff_ratio**4.0
     return lum_ratio
+
+
+def calc_mass_function_from_period_velr(period, velr1):
+    """Calculate the mass function of a binary system from the binary period and
+    the observed radial velocity, e.g. for a single-line spectroscopic binary.
+    
+    Parameters
+    ----------
+    period : float
+        Period of eclipse. Unit is seconds.
+    velr1 : float
+        Semi-amplitude of radial velocity of star 1, the brighter star that is observed.
+        Unit is m/s.
+    
+    Returns
+    -------
+    mfunc : float
+        Mass function for the binary system. Without knowing the mass of star 1 or the inclination,
+        the mass function sets a lower limit for the mass of star 2. Unit is kg.
+    
+    Notes
+    -----
+    mass function =
+        (m2 * sin(i))**3 / (m1 + m2)**2 = (P * v1r**3) / (2*pi*G)
+    From equation 7.7 of [1]_.
+    
+    References
+    ----------
+    .. [1] Carroll and Ostlie, 2007, An Introduction to Modern Astrophysics
+    
+    """
+    mfunc = (period * velr1**3.0) / (2.0*np.pi*sci_con.G)
+    return mfunc
+
+
+def calc_velr2_from_masses_period_incl_velr1(mass1, mass2, velr1, period, incl):
+    """Calculate the semi-amplitude of the radial velocity of star2 from given masses,
+    period, orbital inclination, and semi-amplitude of the radial velocity of star1.
+    
+    Convenience function for handling modeled data from Gianninas et al 2014.
+    Assumes orbital excentricity << 1.
+    
+    Parameters
+    ----------
+    mass1 : float
+        Mass of star 1. Unit is kg.
+    mass2 : float
+        Mass of star 2. Unit is kg.
+    velr1 : float
+        Semi-amplitude of radial velocity of star 1. Unit is m/s.
+    period : float
+        Period of eclipse. Unit is seconds.
+    incl : float
+        Orbital inclination. Angle between line of sight and the axis of the orbit. Unit is radians.
+
+    Returns
+    -------
+    velr2 : float
+        Semi-amplitude of radial velocity of star 1. Unit is m/s.
+    
+    Notes
+    -----
+    a = (P/(2*pi)) * (v1 + v2), where a is semi-major axis of low-eccentricity orbit,
+        P is orbital period, v is orbital velocity.
+    P**2 = ((4*pi**2) / (G*(m1 + m2))) * a**3, where G is gravitational constant,
+    m is stellar mass. Kepler's Third Law.
+    v = vr / sin(i), where vr is observed radial orbital velocity, i is orbital inclination.
+    => m1 + m2 = P/(2*pi*G) * ((v1r + v2r) / sin(i))**3  
+       v2r = ((m1 + m2)((2*pi*G)/P)(sin(i)**3))**(1/3) - v1r
+    From equation 7.6 in section 7.3 of [1]_.
+    Function adapted from [2]_.
+    
+    References
+    ----------
+    .. [1] Carroll and Ostlie, 2007, An Introduction to Modern Astrophysics
+    .. [2] https://pypi.python.org/pypi/binstarsolver/0.1.2
+    
+    """
+    velr2 = ((mass1 + mass2) * ((2.0*np.pi*sci_con.G) / period) * (np.sin(incl))**3.0)**(1.0/3.0) - velr1
+    return velr2
+
+
+def calc_logg_from_mass_radius(mass, radius):
+    """Calculate the surface gravity of a star from its mass.
+    
+    Parameters
+    ----------
+    mass : float
+        Stellar mass. Unit is kg.
+    radius : float
+        Stellar radius. Unit is meters.
+    
+    Returns
+    -------
+    logg : float
+        Log10 of surface gravity of the star. Unit is dex cm/s^2 (dex Gal).
+    
+    Notes
+    -----
+    g = G*M/R**2
+    From Eqn 2.12 of [1]_.
+    
+    References
+    ----------
+    .. [1] Carroll and Ostlie, 2007, An Introduction to Modern Astrophysics
+    
+    """
+    logg = np.log10((sci_con.G*mass/(radius**2.0)) * sci_con.hecto)
+    return logg
+
+
+def calc_loglum_from_radius_teff(radius, teff):
+    """Calculate the log luminosity of a star from its radius and effective temperature.
+    
+    Parameters
+    ----------
+    radius : float
+        Stellar radius. Unit is meters.
+    teff : float
+        Stellar effective temperature. Unit is Kelvin.
+    
+    Returns
+    -------
+    loglum : float
+        Log10 luminosity of the star. Unit is dex Lsun.
+    
+    Notes
+    -----
+    L = 4*pi*R^2*sig*Teff^4,
+    where sig is the Stefan-Boltzmann constant.
+    From Eqn 3.17 of [1]_.
+    
+    References
+    ----------
+    .. [1] Carroll and Ostlie, 2007, An Introduction to Modern Astrophysics
+    
+    """
+    loglum = np.log10((4.0*np.pi*(radius**2.0)*sci_con.Stefan_Boltzmann*(teff**4.0)) / \
+                      ast_con.L_sun.value)
+    return loglum
