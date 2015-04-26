@@ -945,7 +945,7 @@ def calc_velr2_from_masses_period_incl_velr1(mass1, mass2, velr1, period, incl):
 
 
 def calc_logg_from_mass_radius(mass, radius):
-    """Calculate the surface gravity of a star from its mass.
+    """Calculate the surface gravity of a star from its mass and radius.
     
     Parameters
     ----------
@@ -974,7 +974,8 @@ def calc_logg_from_mass_radius(mass, radius):
 
 
 def calc_loglum_from_radius_teff(radius, teff):
-    """Calculate the log luminosity of a star from its radius and effective temperature.
+    """Calculate the log luminosity of a star from its radius and
+    effective temperature.
     
     Parameters
     ----------
