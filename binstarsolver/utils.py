@@ -816,11 +816,61 @@ def calc_mass_function_from_period_velr(period, velr1):
     return mfunc
 
 
+def calc_mass2_from_period_velr1_mass1(period, velr1, incl, mass1):
+    """Calculate the mass of star2 given orbital period, the semi-amplitude
+    of the radial velocity of star1,the orbital inclination, and a mass
+    for star 1, e.g. for a single-line spectroscopic binary with a mass
+    estimated from a stellar model, which was computed from the spectrum.
+    
+    Parameters
+    ----------
+    period : float
+        Period of eclipse. Unit is seconds.
+    velr1 : float
+        Semi-amplitude of radial velocity of star 1, the brighter star
+        that is observed. Unit is m/s.
+    incl : float
+        Orbital inclination. Angle between line of sight and the axis of the orbit.
+        Unit is radians.
+    mass1 : float
+        Mass of star 1, the brighter star that is observed.
+        Unit is kg.
+    
+    Returns
+    -------
+    mass2 : float
+        Mass of star 2, the dimmer star that is observed. Unit is kg.
+    
+    Notes
+    -----
+    Star 1 is the brighter star that is observed.
+    mass function =
+        (m2 * sin(i))**3 / (m1 + m2)**2 = (P * v1r**3) / (2*pi*G)
+    ==> a*m2**2 + b*m2 + c = 0
+        a=1, b=(2*m1 - (sin(i)**3/mass_function)), c=m1**2
+    ==> m2 = (-b + sqrt(b**2 - 4*a*c))/(2*a)
+    From equation 7.7 of [1]_.
+
+    See Also
+    --------
+    calc_mass_function_from_period_velr
+    
+    References
+    ----------
+    .. [1] Carroll and Ostlie, 2007, An Introduction to Modern Astrophysics
+    
+    """
+    mfunc = calc_mass_function_from_period_velr(period=period, velr1=velr1)
+    a = 1.0
+    b = 2.0*mass1 - (np.sin(incl)**3.0)/mfunc
+    c = mass1**2.0
+    mass2 = (-b + np.sqrt(b**2.0 - 4.0*a*c))/(2.0*a) # Choose the postive root.
+    return mass2
+
+
 def calc_velr2_from_masses_period_incl_velr1(mass1, mass2, velr1, period, incl):
     """Calculate the semi-amplitude of the radial velocity of star2 from given masses,
     period, orbital inclination, and semi-amplitude of the radial velocity of star1.
-    
-    Convenience function for handling modeled data from Gianninas et al 2014.
     Assumes orbital excentricity << 1.
     
     Parameters
@@ -834,7 +884,8 @@ def calc_velr2_from_masses_period_incl_velr1(mass1, mass2, velr1, period, incl):
     period : float
         Period of eclipse. Unit is seconds.
     incl : float
-        Orbital inclination. Angle between line of sight and the axis of the orbit. Unit is radians.
+        Orbital inclination. Angle between line of sight and the axis of the orbit.
+        Unit is radians.
 
     Returns
     -------
@@ -848,15 +899,13 @@ def calc_velr2_from_masses_period_incl_velr1(mass1, mass2, velr1, period, incl):
     P**2 = ((4*pi**2) / (G*(m1 + m2))) * a**3, where G is gravitational constant,
     m is stellar mass. Kepler's Third Law.
     v = vr / sin(i), where vr is observed radial orbital velocity, i is orbital inclination.
-    => m1 + m2 = P/(2*pi*G) * ((v1r + v2r) / sin(i))**3  
-       v2r = ((m1 + m2)((2*pi*G)/P)(sin(i)**3))**(1/3) - v1r
+    ==> m1 + m2 = P/(2*pi*G) * ((v1r + v2r) / sin(i))**3  
+        v2r = ((m1 + m2)((2*pi*G)/P)(sin(i)**3))**(1/3) - v1r
     From equation 7.6 in section 7.3 of [1]_.
-    Function adapted from [2]_.
     
     References
     ----------
     .. [1] Carroll and Ostlie, 2007, An Introduction to Modern Astrophysics
-    .. [2] https://pypi.python.org/pypi/binstarsolver/0.1.2
     
     """
     velr2 = ((mass1 + mass2) * ((2.0*np.pi*sci_con.G) / period) * (np.sin(incl))**3.0)**(1.0/3.0) - velr1
