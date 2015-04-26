@@ -345,7 +345,8 @@ def test_calc_lum_ratio_from_radii_teff_ratios(
 
 
 def test_calc_mass_function_from_period_velr(
-    period=8.6*sci_con.year, velr1=33.0*sci_con.kilo, mfunc=2.324294844333284e+31):
+    period=8.6*sci_con.year, velr1=33.0*sci_con.kilo,
+    mfunc=2.324294844333284e+31):
     """Test that calculations are correct using examples 7.3.1, 7.3.2 of [1]_
 
     References
@@ -360,11 +361,30 @@ def test_calc_mass_function_from_period_velr(
     return None
 
 
+def test_calc_mass2_from_period_velr1_incl_mass1(
+    period=8.6*sci_con.year, velr1=33.0*sci_con.kilo,
+    incl=np.deg2rad(90.0), mass1=1.3*ast_con.M_sun.value,
+    mass2=13.9*ast_con.M_sun.value):
+    """pytest style test using examples 7.3.1, 7.3.2 of [1]_
+
+    References
+    ----------
+    .. [1] Carroll and Ostlie, 2007, An Introduction to Modern Astrophysics
+
+    """
+    assert np.isclose(
+        bss.utils.calc_mass2_from_period_velr1_incl_mass1(
+            period=period, velr1=velr1, incl=incl, mass1=mass1),
+        mass2)
+    return None
+
+
 def test_calc_velr2_from_masses_period_incl_velr1(
-    mass1=3.0427831666779509e+31/2.0, mass2=3.0427831666779509e+31/2.0,
-    velr1=33000.0, period=271209600.0, incl=1.5708021113113511,
-    velr2=3100.0):
+    mass1=1.3*ast_con.M_sun.value, mass2=13.9*ast_con.M_sun.value,
+    velr1=33.0*sci_con.kilo, period=8.6*sci_con.year, incl=np.deg2rad(90.0),
+    velr2=3023.3088875319881):
     """Test that calculations are correct using examples 7.3.1, 7.3.2 of [1]_
+    In examples, velr2 = 3100 m/s. Difference is due to rounding.
 
     References
     ----------

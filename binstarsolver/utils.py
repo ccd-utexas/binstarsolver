@@ -816,7 +816,7 @@ def calc_mass_function_from_period_velr(period, velr1):
     return mfunc
 
 
-def calc_mass2_from_period_velr1_mass1(period, velr1, incl, mass1):
+def calc_mass2_from_period_velr1_incl_mass1(period, velr1, incl, mass1):
     """Calculate the mass of star2 given orbital period, the semi-amplitude
     of the radial velocity of star1,the orbital inclination, and a mass
     for star 1, e.g. for a single-line spectroscopic binary with a mass
