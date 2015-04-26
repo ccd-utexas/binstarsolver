@@ -225,9 +225,12 @@ def test_calc_radius_from_radius_sep(
 
 
 def test_calc_radius_from_velrs_times(
-    velr_1=33000.0, velr_2=3100.0, time_1=-7126920.0, time_2=7084800.0,
-    radius=256521546000.0):
-    """Test that calculations are correct using examples 7.3.1, 7.3.2 of [1]_
+    velr_1=33.0*sci_con.kilo, velr_2=3.1*sci_con.kilo,
+    time_1=-(11.7*sci_con.hour + 0.5*164.0*sci_con.day),
+    time_2=-0.5*164.0*sci_con.day,
+    radius=760266000.0):
+    """pytest style test using examples 7.3.1, 7.3.2 of [1]_
+    In the examples, radius = 1.1 Rsun. Difference is due to rounding.
 
     References
     ----------
@@ -239,6 +242,15 @@ def test_calc_radius_from_velrs_times(
             velr_1=velr_1, velr_2=velr_2, time_1=time_1, time_2=time_2),
         radius)
     return None
+
+
+# Additional cases for test_calc_radius_from_velrs_times
+# Radius = 169 Rsun. Difference is due to rounding.
+test_calc_radius_from_velrs_times(
+    velr_1=33.0*sci_con.kilo, velr_2=3.1*sci_con.kilo,
+    time_1=-(11.7*sci_con.hour + 0.5*164.0*sci_con.day),
+    time_2=0.5*164.0*sci_con.day,
+    radius=256521546000.0)
 
 
 def test_calc_mass_ratio_from_velrs(
