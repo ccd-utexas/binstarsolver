@@ -525,39 +525,49 @@ def calc_radius_from_radius_sep(radius_sep, sep):
     return radius
 
 
-def calc_radius_from_velrs_times(velr_1, velr_2, time_1, time_2):
-    """Calculate the radius of a star from the radial velocities of the stars and\
-    relative times of eclipse events. Assumes inclination = 90 deg, no eccentricity. 
+def calc_radius_from_velrs_times(
+    velr_1, velr_2, time_1, time_2):
+    """Calculate the radius of a star from the radial velocities
+    of the stars and relative times of eclipse events.
+    Assumes inclination = 90 deg, no eccentricity. 
     
     Parameters
     ----------
     velr_1 : float
-        Observed radial velocity of star 1. Unit is m/s.
+        Observed radial velocity of star 1. Unit is meters/second.
     velr_2 : float
-        Observed radial velocity of star 2. Unit is m/s.
+        Observed radial velocity of star 2. Unit is meters/second.
     time_1 : float
-        Relative time of beginning of ingress (first contact). Unit is seconds.
+        Relative time of beginning of ingress (first contact).
+        Unit is seconds.
     time_2 : float
         Relative time of end of ingress or beginning of egress.
         during primary minimum (occultation event). Unit is seconds.
-        If eclipse is not total, relative time of end of ingress == relative time of beginning of egress.
-        For radius of smaller-sized star: time_2 = relative time of end of ingress.
-        For radius of greater-sized star: time_2 = relative time of beginning of egress.
+        If eclipse is not total:
+            relative time of end ingress == relative time of begin egress.
+        For radius of smaller-sized star:
+            time_2 = relative time of end ingress.
+        For radius of greater-sized star:
+            time_2 = relative time of begin egress.
     
     Returns
     -------
     radius : float
         Radius of star. Unit is meters.
-        For radius of smaller-sized star: time_2 = relative time of end of ingress.
-        For radius of greater-sized star: time_2 = relative time of beginning of egress.
+        For radius of smaller-sized star:
+            time_2 = relative time of end of ingress.
+        For radius of greater-sized star:
+            time_2 = relative time of beginning of egress.
         
     See Also
     --------
-    calc_radii_ratio_from_light, calc_radius_sep_g_from_sep, calc_radius_sep_s_from_sep
+    calc_radii_ratio_from_light,
+    calc_radius_sep_g_from_sep, calc_radius_sep_s_from_sep
         
     Notes
     -----
-    Note: Calculated radius may not agree with radii from methods that do not  
+    Note: Calculated radius may not agree with radii from methods that do
+    incorporate inclination. 
     rs = (vr1 + vr2)/2 * (t2 - t1), t2 is end of ingress
     rg = (vr1 + vr2)/2 * (t2 - t1), t2 is beginning of egress
     From equations 7.8, 7.9 in section 7.3 of [1]_.
