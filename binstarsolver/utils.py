@@ -846,9 +846,9 @@ def calc_mass2_from_period_velr1_incl_mass1(period, velr1, incl, mass1):
     Star 1 is the brighter star that is observed.
     mass function =
         (m2 * sin(i))**3 / (m1 + m2)**2 = (P * v1r**3) / (2*pi*G)
-    ==> a*m2**2 + b*m2 + c = 0
-        a=1, b=(2*m1 - (sin(i)**3/mass_function)), c=m1**2
-    ==> m2 = (-b + sqrt(b**2 - 4*a*c))/(2*a)
+    ==> a*m2**3 + b*m2**2 + c*m2 + d = 0
+        a=(sin(i)**3/mass_function), b=-1, c=-2*m1, d=-m1**2
+    ==> m2 is the real cubic root.
     From equation 7.7 of [1]_.
 
     See Also
@@ -858,13 +858,35 @@ def calc_mass2_from_period_velr1_incl_mass1(period, velr1, incl, mass1):
     References
     ----------
     .. [1] Carroll and Ostlie, 2007, An Introduction to Modern Astrophysics
+    .. [2] http://en.wikipedia.org/wiki/Cubic_function#General_formula_for_roots
     
     """
+    # Take the maximum of the real solutions as mass2.
     mfunc = calc_mass_function_from_period_velr(period=period, velr1=velr1)
-    a = 1.0
-    b = 2.0*mass1 - (np.sin(incl)**3.0)/mfunc
-    c = mass1**2.0
-    mass2 = (-b + np.sqrt(b**2.0 - 4.0*a*c))/(2.0*a) # Choose the postive root.
+    coefs = [(np.sin(incl)**3.0)/mfunc, -1, -2.0*mass1, -mass1**2.0]
+    roots = np.roots(coefs)
+    real_roots = np.real(roots[np.isreal(roots)])
+    fmt_error = \
+        ("    period = {per}\n" +
+         "    velr1  = {v1}\n" +
+         "    incl   = {incl}\n" +
+         "    mass1  = {m1}\n" +
+         "Coefficients for a*m2**3 + b*m2**2 + c*m2 + d = 0:\n" +
+         "    a = {a}\n" +
+         "    b = {b}\n" +
+         "    c = {c}\n" +
+         "    d = {d}").format(
+             per=period, v1=velr1, incl=incl, m1=mass1,
+             a=coefs[0], b=coefs[1], c=coefs[2], d=coefs[3])
+    if len(real_roots) == 0:
+        raise ValueError(
+            ("Input parameters do not have a real solution for mass2:\n" +
+             fmt_error))
+    mass2 = max(real_roots)
+    if mass2 < 0:
+        raise ValueError(
+            ("Input parameters do not have a positive solution for mass2:\n" +
+             fmt_error))            
     return mass2
 
 

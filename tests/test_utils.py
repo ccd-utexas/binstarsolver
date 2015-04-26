@@ -364,8 +364,9 @@ def test_calc_mass_function_from_period_velr(
 def test_calc_mass2_from_period_velr1_incl_mass1(
     period=8.6*sci_con.year, velr1=33.0*sci_con.kilo,
     incl=np.deg2rad(90.0), mass1=1.3*ast_con.M_sun.value,
-    mass2=13.9*ast_con.M_sun.value):
+    mass2=2.7772611880177194e+31):
     """pytest style test using examples 7.3.1, 7.3.2 of [1]_
+    In the examples, mass2 = 13.9 Msun. Difference is due to rounding.
 
     References
     ----------
