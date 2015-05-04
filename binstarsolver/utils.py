@@ -17,7 +17,7 @@ import matplotlib.pyplot as plt
 
 
 def calc_flux_intg_ratio_from_mags(
-    mag_1, mag_2)
+    mag_1, mag_2):
     r"""Calculate the ratio of integrated fluxes from two magnitudes.
     
     Parameters
