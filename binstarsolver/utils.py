@@ -406,31 +406,31 @@ def calc_incl_from_radii_ratios_phase_incl(
             incl = np.nan
             warnings.warn(
                 ("\n" +
-                "    Difference in radii ratios did not converge to within\n" +
-                "    tolerance. Input parameters:\n" +
+                "Difference in radii ratios did not converge to within\n" +
+                "tolerance. Input parameters:\n" +
                 fmt_parameters))
         if radii_ratio_rad(incl=incl) < 0.1:
             warnings.warn(
                 ("\n" +
-                 "    From eclipse timing events, ratio of smaller star's\n" +
-                 "    radius to greater star's radius is < 0.1. The radii\n" +
-                 "    ratio as calculated from light levels may b invalid\n"  +
-                "    (e.g. for a binary system with a main sequence star\n" +
-                "    and a red giant).\n" +
-                "    VALID:\n" +
-                "    radii_ratio_rad = radius_s/radius_g from timings\n" +
-                "                    = {rtime}\n" +
-                "    MAYBE INVALID:\n" +
-                "    radii_ratio_lt  = radius_s/radius_g from light levels\n" +
-                "                    = {rlt}").format(
+                 "From eclipse timing events, ratio of smaller star's\n" +
+                 "radius to greater star's radius is < 0.1. The radii\n" +
+                 "ratio as calculated from light levels may b invalid\n"  +
+                 "(e.g. for a binary system with a main sequence star\n" +
+                 "and a red giant).\n" +
+                 "    VALID:\n" +
+                 "    radii_ratio_rad = radius_s/radius_g from timings\n" +
+                 "                    = {rtime}\n" +
+                 "    MAYBE INVALID:\n" +
+                 "    radii_ratio_lt  = radius_s/radius_g from light levels\n" +
+                 "                    = {rlt}").format(
                     rtime=radii_ratio_rad(incl=incl),
                     rlt=radii_ratio_lt))
     else:
         incl = np.nan
         warnings.warn(
             ("\n" +
-             "    Inclination does not yield self-consistent solution.\n" +
-             "    Input parameters cannot be fit by model:\n" +
+             "Inclination does not yield self-consistent solution.\n" +
+             "Input parameters cannot be fit by model:\n" +
              fmt_parameters))
     # Create and show diagnostic plots.
     if show_plots:

@@ -179,15 +179,20 @@ def test_calc_incl_from_radii_ratios_phase_incl(
             radii_ratio_lt=radii_ratio_lt, phase_orb_ext=phase_orb_ext,
             phase_orb_int=phase_orb_int, tol=tol, maxiter=maxiter,
             show_plots=show_plots)
-    assert np.isclose(incl, test_incl)
+    # NOTE: calc_incl_from_radii_ratios_phase_incl can return np.nan
+    assert np.isclose(incl, test_incl, equal_nan=True)
     return None
 
 
-# Test special cases for test_calc_incl_from_radii_ratios_phase_incl
+# Additional cases for test_calc_incl_from_radii_ratios_phase_incl
 test_calc_incl_from_radii_ratios_phase_incl(
     radii_ratio_lt=0.4381670461247158, phase_orb_ext=0.0469912,
     phase_orb_int=0.01681132, tol=1e-4, maxiter=10, show_plots=False,
     incl=1.5628010760257987)
+test_calc_incl_from_radii_ratios_phase_incl(
+    radii_ratio_lt=2.2458916679, phase_orb_ext=0.165111260919,
+    phase_orb_int=0.164135455619, tol=1e-4, maxiter=10, show_plots=False,
+    incl=np.nan)
 
 
 def test_calc_semimaj_axis_from_period_velr_incl(
