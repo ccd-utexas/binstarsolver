@@ -17,7 +17,7 @@ Input observed quantities
 
 * Relative times of begin/end ingress/egress and mid-eclipse.
 * Orbital period.
-* Light levels during occultation (primary eclipse), transit (secondary eclipse), and outside of eclipse.
+* Light levels during occultation, transit, and outside of eclipse.
 * Stellar radial velocities.
 
 Output estimated physical quantities

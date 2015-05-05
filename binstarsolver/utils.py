@@ -54,7 +54,7 @@ def calc_fluxes_intg_rel_from_light(
     Parameters
     ----------
     light_oc : float
-        Light level during occultation (primary eclipse). Light level
+        Light level during occultation. Light level
         is the average of the flat region at the bottom
         of one of the eclipse minima. The event is a total eclipse
         of the star with the smaller radius.
@@ -171,15 +171,14 @@ def calc_radii_ratio_from_light(
     Parameters
     ----------
     light_oc : float
-        Light level during occultation (primary eclipse). Light level
+        Light level during occultation. Light level
         is the average of the flat region at the bottom of one of the
         eclipse minima. The event is a total eclipse of the star with
         the smaller radius.
     light_tr : float
-        Light level during transit (secondary eclipse). Light level
-        is the average of the rounded region at the bottom of one
-        of the eclipse minima. The event is an annular eclipse of the star
-        with the larger radius.
+        Light level during transit. Light level is the average of the rounded
+        region at the bottom of one of the eclipse minima. The event is an
+        annular eclipse of the star with the larger radius.
     light_ref : {1.0}, float, optional
         Reference for light levels outside of eclipse. Typically total system
         light is normalized to 1.0.
@@ -581,7 +580,7 @@ def calc_radius_from_velrs_times(
         Unit is seconds.
     time_2 : float
         Relative time of end of ingress or beginning of egress.
-        during primary minimum (occultation event). Unit is seconds.
+        Unit is seconds.
         If eclipse is not total:
             relative time of end ingress == relative time of begin egress.
         For radius of smaller-radius star:
@@ -750,14 +749,13 @@ def calc_flux_rad_ratio_from_light(
     Parameters
     ----------
     light_oc : float
-        Light level during occultation (primary eclipse). Light level is the
+        Light level during occultation. Light level is the
         average of the flat region at the bottom of one of the eclipse minima.
         The event is a total eclipse of the star with the smaller radius.
     light_tr : float
-        Light level during transit (secondary eclipse). Light level is the
-        average of the rounded region at the bottom of one of the eclipse
-        minima. The event is an annular eclipse of the star with the larger
-        radius.
+        Light level during transit. Light level is the average of the rounded
+        region at the bottom of one of the eclipse minima. The event is an
+        annular eclipse of the star with the larger radius.
     light_ref : {1.0}, float, optional
         Reference for light levels outside of eclipse. Typically total system
         light is normalized to 1.0.
