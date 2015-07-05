@@ -907,7 +907,7 @@ def calc_mass_function_from_period_velr(
     return mfunc
 
 
-@numba.jit(nopython=True)
+# TODO: speedup with @numba.jit(nopython=True)
 def calc_mass2_from_period_velr1_incl_mass1(
     period, velr1, incl, mass1):
     r"""Calculate the mass of star2 given orbital period, the semi-amplitude
@@ -1068,7 +1068,7 @@ def calc_logg_from_mass_radius(
     return logg
 
 
-@numba.jit(nopython=True)
+# TODO: speedup with @numba.jit(nopython=True)
 def calc_loglum_from_radius_teff(
     radius, teff):
     r"""Calculate the log luminosity of a star from its radius and
