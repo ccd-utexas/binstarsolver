@@ -47,7 +47,7 @@ setuptools.setup(
     packages=setuptools.find_packages(exclude=['contrib', 'docs', 'tests*']),
     # Run-time dependencies. Will be installed by pip.
     # https://packaging.python.org/en/latest/requirements.html
-    install_requires=['numpy>=1.8.2', 'scipy>=0.14.0', 'matplotlib>=1.4.0'],
+    install_requires=['numpy>=1.8.2', 'scipy>=0.14.0', 'matplotlib>=1.4.0', 'numba>=0.19.1'],
     # Additional dependencies (e.g. development dependencies).
     # Install using: $ pip install -e .[dev,test]
     extras_require = {

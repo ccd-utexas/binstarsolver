@@ -11,11 +11,13 @@ import sys
 import warnings
 # Import installed packages.
 import astropy.constants as ast_con
-import numpy as np
-import scipy.constants as sci_con
 import matplotlib.pyplot as plt
+import scipy.constants as sci_con
+import numba
+import numpy as np
 
 
+@numba.jit(nopython=True)
 def calc_flux_intg_ratio_from_mags(
     mag_1, mag_2):
     r"""Calculate the ratio of integrated fluxes from two magnitudes.
@@ -46,6 +48,7 @@ def calc_flux_intg_ratio_from_mags(
     return flux_intg_ratio
 
 
+@numba.jit(nopython=True)
 def calc_fluxes_intg_rel_from_light(
     light_oc, light_ref=1.0):
     r"""Calculate integrated fluxes of the of both binary stars relative
@@ -88,6 +91,7 @@ def calc_fluxes_intg_rel_from_light(
     return (flux_intg_rel_s, flux_intg_rel_g)
 
 
+@numba.jit(nopython=True)
 def calc_phase_orb_from_time_period(
     time_event, period, time_mideclipse=0.0):
     r"""Calculate orbital phase angle in radians for an event relative
@@ -123,6 +127,7 @@ def calc_phase_orb_from_time_period(
     return phase_orb
 
 
+@numba.jit(nopython=True)
 def calc_sep_proj_from_incl_phase(
     incl, phase_orb):
     r"""Calculate the projected separation of the two star centers
@@ -160,6 +165,7 @@ def calc_sep_proj_from_incl_phase(
     return sep_proj
 
 
+@numba.jit(nopython=True)
 def calc_radii_ratio_from_light(
     light_oc, light_tr, light_ref=1.0):
     r"""Calculate ratio of radii of smaller-radius star to
@@ -208,6 +214,7 @@ def calc_radii_ratio_from_light(
     return radii_ratio_lt
 
 
+@numba.jit(nopython=True)
 def calc_radii_sep_from_seps(
     sep_proj_ext, sep_proj_int):
     r"""Calculate the radii of both binary stars from projections of star
@@ -258,6 +265,7 @@ def calc_radii_sep_from_seps(
     return (radius_sep_s, radius_sep_g) 
 
 
+@numba.jit(nopython=True)
 def calc_radii_ratio_from_rads(
     radius_sep_s, radius_sep_g):
     r"""Calculate ratio of radii of smaller-radius star to greater-radius star.
@@ -466,6 +474,7 @@ def calc_incl_from_radii_ratios_phase_incl(
     return incl
 
 
+@numba.jit(nopython=True)
 def calc_semimaj_axis_from_period_velr_incl(
     period, velr, incl):
     r"""Calculate semi-major axis of a star's orbit from observed period,
@@ -507,6 +516,7 @@ def calc_semimaj_axis_from_period_velr_incl(
     return axis
 
 
+@numba.jit(nopython=True)
 def calc_sep_from_semimaj_axes(
     axis_1, axis_2):
     r"""Calculate separation distance between binary stars from semi-major axes.
@@ -537,6 +547,7 @@ def calc_sep_from_semimaj_axes(
     return sep
 
 
+@numba.jit(nopython=True)
 def calc_radius_from_radius_sep(
     radius_sep, sep):
     r"""Calculate the radius of a star converting from units of star-star
@@ -563,6 +574,7 @@ def calc_radius_from_radius_sep(
     return radius
 
 
+@numba.jit(nopython=True)
 def calc_radius_from_velrs_times(
     velr_1, velr_2, time_1, time_2):
     r"""Calculate the radius of a star from the radial velocities
@@ -619,6 +631,7 @@ def calc_radius_from_velrs_times(
     return radius
 
 
+@numba.jit(nopython=True)
 def calc_mass_ratio_from_velrs(
     velr_1, velr_2):
     r"""Calculate ratio of stellar masses from observed radial velocities.
@@ -657,6 +670,7 @@ def calc_mass_ratio_from_velrs(
     return mass_ratio
 
 
+@numba.jit(nopython=True)
 def calc_mass_sum_from_period_velrs_incl(
     period, velr_1, velr_2, incl):
     r"""Calculate the sum of stellar masses from observed period,
@@ -707,6 +721,7 @@ def calc_mass_sum_from_period_velrs_incl(
     return mass_sum
 
 
+@numba.jit(nopython=True)
 def calc_masses_from_ratio_sum(
     mass_ratio, mass_sum):
     r"""Calculate the individual stellar masses from their sum and ratio.
@@ -740,6 +755,7 @@ def calc_masses_from_ratio_sum(
     return (mass_1, mass_2)
 
 
+@numba.jit(nopython=True)
 def calc_flux_rad_ratio_from_light(
     light_oc, light_tr, light_ref=1.0):
     r"""Calculate ratio of the radiative fluxes of the smaller-radius star to
@@ -781,6 +797,7 @@ def calc_flux_rad_ratio_from_light(
     return flux_rad_ratio
 
 
+@numba.jit(nopython=True)
 def calc_teff_ratio_from_flux_rad_ratio(
     flux_rad_ratio):
     r"""Calculate ratio of the effective temperatures of the smaller-radius
@@ -813,6 +830,7 @@ def calc_teff_ratio_from_flux_rad_ratio(
     return teff_ratio
 
 
+@numba.jit(nopython=True)
 def calc_lum_ratio_from_radii_teff_ratios(
     radii_ratio, teff_ratio):
     r"""Calculate ratio of the luminosities of the smaller star to greater star
@@ -852,6 +870,7 @@ def calc_lum_ratio_from_radii_teff_ratios(
     return lum_ratio
 
 
+@numba.jit(nopython=True)
 def calc_mass_function_from_period_velr(
     period, velr1):
     r"""Calculate the mass function of a binary system from the binary period
@@ -888,6 +907,7 @@ def calc_mass_function_from_period_velr(
     return mfunc
 
 
+# TODO: speedup with @numba.jit(nopython=True)
 def calc_mass2_from_period_velr1_incl_mass1(
     period, velr1, incl, mass1):
     r"""Calculate the mass of star2 given orbital period, the semi-amplitude
@@ -963,6 +983,7 @@ def calc_mass2_from_period_velr1_incl_mass1(
     return mass2
 
 
+@numba.jit(nopython=True)
 def calc_velr2_from_masses_period_incl_velr1(
     mass1, mass2, velr1, period, incl):
     r"""Calculate the semi-amplitude of the radial velocity of star2 from
@@ -1016,6 +1037,7 @@ def calc_velr2_from_masses_period_incl_velr1(
     return velr2
 
 
+@numba.jit(nopython=True)
 def calc_logg_from_mass_radius(
     mass, radius):
     r"""Calculate the surface gravity of a star from its mass and radius.
@@ -1046,6 +1068,7 @@ def calc_logg_from_mass_radius(
     return logg
 
 
+# TODO: speedup with @numba.jit(nopython=True)
 def calc_loglum_from_radius_teff(
     radius, teff):
     r"""Calculate the log luminosity of a star from its radius and

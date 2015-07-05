@@ -5,6 +5,12 @@ CHANGELOG
 * This project adheres to `Semantic Versioning <http://semver.org/>`_.
 * This change log is adapted from to `Keep a CHANGELOG <http://keepachangelog.com/>`_.
 
+[v0.1.4] - TBD
+--------------------------
+Added
+^^^^^
+* `Issue 17 <https://github.com/ccd-utexas/binstarsolver/issues/17>`_: Created mass function.
+
 [v0.1.3] - 20150420T180000
 --------------------------
 Added
