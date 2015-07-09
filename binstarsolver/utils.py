@@ -696,10 +696,13 @@ def calc_mass_sum_from_period_velrs_incl(
     
     Notes
     -----
-    a = (P/(2*pi)) * (v1 + v2), where
-        a is semi-major axis of low-eccentricity orbit,
+    a = a1 + a2
+      = (P/(2*pi)) * (v1 + v2), where
+        a is semi-major axis of the orbit of the reduced-mass,
+        a1, a2 are semi-major axes of the individual stars,
         P is orbital period,
         v is orbital velocity.
+        From page 184 in section 7.2 of [1]_.
     From Kepler's Third Law,
     P**2 = ((4*pi**2) / (G*(m1 + m2))) * a**3, where
         G is gravitational constant,
